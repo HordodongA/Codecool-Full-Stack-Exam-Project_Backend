@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express"
 import { z } from "zod"
 import { safeParserFc } from "../utilities/safeParser"
 
-export const validateRequest = <Schema extends z.ZodTypeAny> (schema: Schema) => (req: Request, res: Response, next: NextFunction) => {
+export const validateRequestFc = <Schema extends z.ZodTypeAny> (schema: Schema) => (req: Request, res: Response, next: NextFunction) => {
     const result = safeParserFc(schema, req.body)
     if (!result) {
         return res.sendStatus(400)

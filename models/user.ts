@@ -4,7 +4,7 @@ import { Schema , InferSchemaType} from "mongoose";
 
 const UserSchema = new Schema({
     sub: {
-        type: Number,
+        type: String,
         unique: true,
         required: true,
     },
