@@ -5,14 +5,15 @@ import { z } from "zod"
 import { validateRequestFc } from "../middlewares/validateRequest"
 import { safeParserFc } from "../utilities/safeParser"
 import { env } from "../utilities/envParser"
+if (!env.JWT_SECRET_KEY) throw "Secret Key is required."
 import { getIdToken } from "../api/googleOauth2"
 // import Mongoose models
-import { User, UserType } from "../models/user"
+import { User, ActivityType, MachineType, AssetType, UserType } from "../models/user"
 
-// router endpoint: /api/login
+
+// * router endpoint: /api/login
 const router = express.Router()
 
-if (!env.JWT_SECRET_KEY) throw "Secret Key is required."
 
 // ZOD Schemas and TS Types
 const LoginRequestSchema = z.object({
@@ -26,7 +27,7 @@ const PayloadSchema = z.object({
     email: z.string().email(),
     picture: z.string(),
 })
-type PayloadType = z.infer<typeof PayloadSchema>
+export type PayloadType = z.infer<typeof PayloadSchema>
 
 
 router.post("/", validateRequestFc(LoginRequestSchema), async (req: Request, res: Response) => {
@@ -38,18 +39,16 @@ router.post("/", validateRequestFc(LoginRequestSchema), async (req: Request, res
     const payload: unknown = jwt.decode(idToken)
     const result = safeParserFc(PayloadSchema, payload)
     if (!result) { return res.sendStatus(500) }
-    console.log( result)
 
-    const data = result
-    // const user = await User.findOne({ sub: data.sub }) as UserType | null
+    const user = await User.findOne({ sub: result.sub }) as UserType | null
+    if (!user) {
+        const newUser = await User.create({ sub: result.sub }) as UserType
+        const sessionToken = jwt.sign(result, env.JWT_SECRET_KEY, { expiresIn: "6h" })
+        return res.send({ sessionToken })
+    }
 
-    // if (!user) {
-    //     const newUser = await User.create(data) as UserType
-    //     const sessionToken = jwt.sign({ data }, env.JWT_SECRET_KEY)
-    //     return res.send({ sessionToken })
-    // }
-    const sessionToken = jwt.sign( JSON.stringify(result) , env.JWT_SECRET_KEY)
+    const sessionToken = jwt.sign(result, env.JWT_SECRET_KEY, { expiresIn: "6h" })
     res.send({ sessionToken })
-})      // ! Valamiértnem jól kerül be a payload a session tokenbe!!!
+})
 
 export default router
