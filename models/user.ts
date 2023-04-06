@@ -1,7 +1,57 @@
-const mongoose = require('mongoose')
+import mongoose from 'mongoose';
 import { Schema, InferSchemaType, Types } from "mongoose";
 
 
+const UserSchema = new Schema({
+    sub: {
+        type: String,
+        unique: true,
+        required: true,
+    },
+    assets: {
+        required: false,
+        type: [{
+            name: {
+                required: true,
+                type: String,
+            },
+            location: String,
+            credentials: String,
+            details: String,
+            notes: String,
+            activities: {
+                required: false,
+                type: [{
+                    name: {
+                        type: String,
+                        required: true,
+                    },
+                    todos: String,
+                }],
+            },
+            machines: {
+                required: false,
+                type: [{
+                    name: {
+                        type: String,
+                        required: true,
+                    },
+                    type: String,
+                    unique_id: String,
+                    service: String,
+                    todos: String,
+                }],
+            },
+        }],
+    }
+})
+
+export type UserType = InferSchemaType<typeof UserSchema>
+export const User = mongoose.model<UserType>('User', UserSchema)
+
+
+
+/* 
 export interface ActivityType extends Document {
     name?: string,
     todos?: string,
@@ -61,67 +111,6 @@ const UserSchema = new Schema<UserType>({
 })
 
 // export type UserTypee = UserType
-// export type UserType = InferSchemaType<typeof UserSchema>
+export type UserType = InferSchemaType<typeof UserSchema>
 export const User = mongoose.model('User', UserSchema)
-
-
-
-// const UserSchema = new Schema({
-//     sub: {
-//         type: String,
-//         unique: true,
-//         required: true,
-//     },
-//     assets: [{
-//         name: {
-//             type: String,
-//             required: true,
-//         },
-//         location: String,
-//         credentials: String,
-//         details: String,
-//         notes: String,
-//         activities: [{
-//             name: {
-//                 type: String,
-//                 required: true,
-//             },
-//             todos: String,
-//         }],
-//         machines: [{
-//             name: {
-//                 type: String,
-//                 required: true,
-//             },
-//             type: String,
-//             unique_id: String,
-//             service: String,
-//             todos: String,
-//         }],
-// /*         inspections: [{
-//             name: {
-//                 type: String,
-//                 required: true,
-//             },
-//             todos: String,
-//             fisrtDate: {
-//                 type: Date,
-//                 required: true,
-//             },
-//             // fisrtDate: String,
-//             // firstTime: String,
-//             repeate_months: {
-//                 type: Number,
-//                 required: true,
-//             },
-//             repeate_type: {
-//                 type: String,
-//                 required: true,
-//             },
-//             google_calendar_task_id: {
-//                 type: String,
-//                 required: true,
-//             },
-//         }], */
-//     }],
-// })
+ */

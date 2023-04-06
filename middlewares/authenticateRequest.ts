@@ -17,4 +17,6 @@ export const authenticateRequest = (req: Request, res: Response, next: NextFunct
     }
 }
 
-// ! 11.es sor: as PayloadSchema-- Itt is safeParse-olnom kéne???
+// ? 11.es sor: as PayloadSchema-- Itt is safeParse-olnom kéne? Kell itt a type?
+// ? Itt dobjam vissza a requestet vagy az endpointon?
+// ? 9-es sor: inkább ez vagy inkább a 14-es sor?

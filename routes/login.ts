@@ -8,7 +8,7 @@ import { env } from "../utilities/envParser"
 if (!env.JWT_SECRET_KEY) throw "Secret Key is required."
 import { getIdToken } from "../api/googleOauth2"
 // import Mongoose models
-import { User, ActivityType, MachineType, AssetType, UserType } from "../models/user"
+import { User, UserType } from "../models/user"
 
 
 // * router endpoint: /api/login
@@ -40,13 +40,12 @@ router.post("/", validateRequestFc(LoginRequestSchema), async (req: Request, res
     const result = safeParserFc(PayloadSchema, payload)
     if (!result) { return res.sendStatus(500) }
 
-    const user = await User.findOne({ sub: result.sub }) as UserType | null
+    const user = await User.findOne({ sub: result.sub })
     if (!user) {
-        const newUser = await User.create({ sub: result.sub }) as UserType
+        const newUser = await User.create<UserType>({ sub: result.sub })
         const sessionToken = jwt.sign(result, env.JWT_SECRET_KEY, { expiresIn: "6h" })
         return res.send({ sessionToken })
     }
-
     const sessionToken = jwt.sign(result, env.JWT_SECRET_KEY, { expiresIn: "6h" })
     res.send({ sessionToken })
 })

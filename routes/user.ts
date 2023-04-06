@@ -4,7 +4,7 @@ import { z } from "zod"
 import { validateRequestFc } from "../middlewares/validateRequest"
 import { authenticateRequest } from "../middlewares/authenticateRequest"
 // import Mongoose models
-import { User, ActivityType, MachineType, AssetType, UserType } from "../models/user"
+import { User, UserType } from "../models/user"
 
 // * router endpoint: /api/user
 const router = express.Router()
