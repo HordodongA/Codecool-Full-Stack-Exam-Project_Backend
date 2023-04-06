@@ -2,7 +2,7 @@ import express, { Express, Request, Response } from "express"
 import jwt from "jsonwebtoken"
 import { z } from "zod"
 // import utility and middleware functions
-import { validateRequestFc } from "../middlewares/validateRequest"
+import { validateRequestMw } from "../middlewares/validateRequest"
 import { safeParserFc } from "../utilities/safeParser"
 import { env } from "../utilities/envParser"
 if (!env.JWT_SECRET_KEY) throw "Secret Key is required."
@@ -21,7 +21,7 @@ const LoginRequestSchema = z.object({
 })
 type LoginRequestType = z.infer<typeof LoginRequestSchema>
 
-const PayloadSchema = z.object({
+export const PayloadSchema = z.object({
     name: z.string(),
     sub: z.string(),
     email: z.string().email(),
@@ -30,8 +30,8 @@ const PayloadSchema = z.object({
 export type PayloadType = z.infer<typeof PayloadSchema>
 
 
-router.post("/", validateRequestFc(LoginRequestSchema), async (req: Request, res: Response) => {
-
+// routes
+router.post("/", validateRequestMw(LoginRequestSchema), async (req: Request, res: Response) => {
     const loginRequest = req.body as LoginRequestType
     const idToken = await getIdToken(loginRequest.code)
     if (!idToken) return res.sendStatus(401)

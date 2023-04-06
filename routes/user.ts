@@ -1,8 +1,8 @@
 import express, { Express, Request, Response } from "express"
 import { z } from "zod"
 // import utility and middleware functions
-import { validateRequestFc } from "../middlewares/validateRequest"
-import { authenticateRequest } from "../middlewares/authenticateRequest"
+import { passOnlyUserMw } from "../middlewares/passOnlyUser"
+import { validateRequestMw } from "../middlewares/validateRequest"
 // import Mongoose models
 import { User, UserType } from "../models/user"
 
@@ -34,9 +34,8 @@ const userRequestSchema = z.object({
 type userRequestType = z.infer<typeof userRequestSchema>
 
 
-
-router.get("/", authenticateRequest, async (req: Request, res: Response) => {
-    // if (!res.locals.sub) { res.sendStatus(401) }
+// routes
+router.get("/", passOnlyUserMw, async (req: Request, res: Response) => {
     const user = await User.findOne({ sub: res.locals.sub }) as UserType | null
     if (!user) { return res.sendStatus(404) }
     res.send(user)
@@ -44,8 +43,7 @@ router.get("/", authenticateRequest, async (req: Request, res: Response) => {
 
 
 
-router.put("/", authenticateRequest, validateRequestFc(userRequestSchema), async (req: Request, res: Response) => {
-    // if (!res.locals.sub) { res.sendStatus(401) }
+router.put("/", passOnlyUserMw, validateRequestMw(userRequestSchema), async (req: Request, res: Response) => {
     const request = req.body as userRequestType
     const updatedUser = await User.findOneAndUpdate({ sub: res.locals.sub }, { $set: { "assets": request.assets } }, { new: true })
     if (!updatedUser) { return res.sendStatus(500) }
@@ -54,8 +52,7 @@ router.put("/", authenticateRequest, validateRequestFc(userRequestSchema), async
 
 
 
-router.delete("/", authenticateRequest, async (req: Request, res: Response) => {
-    // if (!res.locals.sub) { res.sendStatus(401) }
+router.delete("/", passOnlyUserMw, async (req: Request, res: Response) => {
     const deletedUser = await User.findOneAndDelete({ sub: res.locals.sub })
     if (!deletedUser) { return res.sendStatus(400) }
     res.sendStatus(200)
