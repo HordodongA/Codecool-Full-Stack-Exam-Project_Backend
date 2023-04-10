@@ -1,6 +1,7 @@
 import express, { Express, Request, Response } from "express"
 import { z } from "zod"
 // import utility and middleware functions
+import { filterMethodsMw } from "../middlewares/filterMethods"
 import { passOnlyUserMw } from "../middlewares/passOnlyUser"
 import { validateRequestMw } from "../middlewares/validateRequest"
 // import Mongoose models
@@ -35,27 +36,35 @@ type userRequestType = z.infer<typeof userRequestSchema>
 
 
 // routes
-router.get("/", passOnlyUserMw, async (req: Request, res: Response) => {
+router.all("/", filterMethodsMw(["GET", "PUT", "DELETE"]), passOnlyUserMw)
+
+router.get("/", async (req: Request, res: Response) => {
+    console.log("A request reached /api/user GET endpoint")
     const user = await User.findOne({ sub: res.locals.sub }) as UserType | null
+    // console.log(user)
     if (!user) { return res.sendStatus(404) }
     res.send(user)
 })
 
 
 
-router.put("/", passOnlyUserMw, validateRequestMw(userRequestSchema), async (req: Request, res: Response) => {
+router.put("/", validateRequestMw(userRequestSchema), async (req: Request, res: Response) => {
+    console.log("A request reached /api/user PUT endpoint")
     const request = req.body as userRequestType
     const updatedUser = await User.findOneAndUpdate({ sub: res.locals.sub }, { $set: { "assets": request.assets } }, { new: true })
-    if (!updatedUser) { return res.sendStatus(500) }
+    console.log(updatedUser)
+    if (!updatedUser) { return res.sendStatus(503) }
     res.send(updatedUser)
 })
 
 
 
-router.delete("/", passOnlyUserMw, async (req: Request, res: Response) => {
+router.delete("/", async (req: Request, res: Response) => {
+    console.log("A request reached /api/user DELETE endpoint")
     const deletedUser = await User.findOneAndDelete({ sub: res.locals.sub })
-    if (!deletedUser) { return res.sendStatus(400) }
-    res.sendStatus(200)
+    console.log(deletedUser)
+    if (!deletedUser) { return res.sendStatus(503) }
+    res.sendStatus(204)
 })
 
 

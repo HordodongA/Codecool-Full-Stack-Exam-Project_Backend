@@ -15,9 +15,10 @@ export const authenticateRequestMw = (req: Request, res: Response, next: NextFun
         const result = safeParserFc(PayloadSchema, decodedToken)
         if (!result) { return res.sendStatus(400) }
         res.locals.sub = result.sub
-        next()
-    } catch (err) {
-        console.log(err)
+        // console.log("Authenticaton successful.")
+        return next()
+    } catch (error) {
+        console.log(error)
         next()
     }
 }

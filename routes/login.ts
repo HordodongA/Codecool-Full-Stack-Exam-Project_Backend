@@ -2,6 +2,7 @@ import express, { Express, Request, Response } from "express"
 import jwt from "jsonwebtoken"
 import { z } from "zod"
 // import utility and middleware functions
+import { filterMethodsMw } from "../middlewares/filterMethods"
 import { validateRequestMw } from "../middlewares/validateRequest"
 import { safeParserFc } from "../utilities/safeParser"
 import { env } from "../utilities/envParser"
@@ -31,6 +32,8 @@ export type PayloadType = z.infer<typeof PayloadSchema>
 
 
 // routes
+router.all("/", filterMethodsMw(["POST"]))
+
 router.post("/", validateRequestMw(LoginRequestSchema), async (req: Request, res: Response) => {
     const loginRequest = req.body as LoginRequestType
     const idToken = await getIdToken(loginRequest.code)
