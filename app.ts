@@ -1,6 +1,6 @@
 import dotenv from 'dotenv'
 dotenv.config()
-import express, { Express, Request, Response } from 'express'
+import express, { Express } from 'express'
 import cors from 'cors'
 import { authenticateRequestMw } from './middlewares/authenticateRequest'
 // import routes
