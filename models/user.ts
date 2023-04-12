@@ -23,8 +23,8 @@ const UserSchema = new Schema({
                 required: false,
                 type: [{
                     name: {
-                        type: String,
                         required: true,
+                        type: String,
                     },
                     todos: String,
                 }],
@@ -33,10 +33,10 @@ const UserSchema = new Schema({
                 required: false,
                 type: [{
                     name: {
-                        type: String,
                         required: true,
+                        type: String,
                     },
-                    type: String,
+                    model: String,
                     unique_id: String,
                     service: String,
                     todos: String,
@@ -48,7 +48,6 @@ const UserSchema = new Schema({
 
 export type UserType = InferSchemaType<typeof UserSchema>
 export const User = mongoose.model<UserType>('User', UserSchema)
-
 
 
 /* 

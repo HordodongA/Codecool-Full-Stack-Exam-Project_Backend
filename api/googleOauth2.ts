@@ -16,7 +16,6 @@ type ResponseType = z.infer<typeof ResponseSchema>
 
 
 export const getIdToken = async (code: string): Promise<string | null> => {
-
     try {
         const response: AxiosResponse = await axios.post(url, {
             client_id: env.CLIENT_ID,
@@ -25,16 +24,12 @@ export const getIdToken = async (code: string): Promise<string | null> => {
             code,
             grant_type: "authorization_code"
         })
-        // console.log("getIdToken response: ", response.data);
-
         const result = ResponseSchema.safeParse(response.data)
-        // console.log("Google OpenId response object: " + result)
         if (result.success === false) {
             console.log("getIDToken safeParse error")
             return null
         }
         return result.data.id_token
-
     } catch (error) {
         console.log("getIDToken error")
         return null

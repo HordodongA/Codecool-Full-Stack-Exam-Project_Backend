@@ -41,7 +41,6 @@ router.all("/", filterMethodsMw(["GET", "PUT", "DELETE"]), passOnlyUserMw)
 router.get("/", async (req: Request, res: Response) => {
     console.log("A request reached /api/user GET endpoint")
     const user = await User.findOne({ sub: res.locals.sub }) as UserType | null
-    // console.log(user)
     if (!user) { return res.sendStatus(404) }
     res.send(user)
 })
@@ -52,7 +51,7 @@ router.put("/", validateRequestMw(userRequestSchema), async (req: Request, res: 
     console.log("A request reached /api/user PUT endpoint")
     const request = req.body as userRequestType
     const updatedUser = await User.findOneAndUpdate({ sub: res.locals.sub }, { $set: { "assets": request.assets } }, { new: true })
-    console.log(updatedUser)
+    // console.log(updatedUser)
     if (!updatedUser) { return res.sendStatus(503) }
     res.send(updatedUser)
 })

@@ -41,7 +41,7 @@ router.post("/", validateRequestMw(LoginRequestSchema), async (req: Request, res
 
     const payload: unknown = jwt.decode(idToken)
     const result = safeParserFc(PayloadSchema, payload)
-    if (!result) { return res.sendStatus(500) }
+    if (!result) { return res.sendStatus(503) }
 
     const user = await User.findOne({ sub: result.sub })
     if (!user) {
