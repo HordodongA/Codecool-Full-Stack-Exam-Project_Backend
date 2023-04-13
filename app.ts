@@ -1,7 +1,10 @@
+// for testing...
+import dotenv from "dotenv"
+dotenv.config()
+import { env } from "./utilities/envParser"
 import express, { Express } from 'express'
 import cors from 'cors'
 import mongoose from "mongoose"
-import { env } from "./utilities/envParser"
 import { greenBright } from 'console-log-colors';
 // import middlewares
 import { authenticateRequestMw } from './middlewares/authenticateRequest'

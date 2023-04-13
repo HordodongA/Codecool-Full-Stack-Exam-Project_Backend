@@ -61,7 +61,6 @@ router.put("/", validateRequestMw(userRequestSchema), async (req: Request, res: 
 router.delete("/", async (req: Request, res: Response) => {
     console.log("A request reached /api/user DELETE endpoint")
     const deletedUser = await User.findOneAndDelete({ sub: res.locals.sub })
-    console.log(deletedUser)
     if (!deletedUser) { return res.sendStatus(503) }
     res.sendStatus(204)
 })
