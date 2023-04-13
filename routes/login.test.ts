@@ -1,65 +1,127 @@
 import dotenv from "dotenv"
-dotenv.config({path: "../.env.test"})
+dotenv.config()
+import { connect, cleanData, disconnect } from "../mongodbMemoryServer/mongodb-memory-test-helper"
+import { User } from "../models/user"
 import supertest from "supertest"
 import app from "../app"
 
 const testApp = supertest(app)
 
 
-// describe("Testing request headers: not allowed HTTP methods", ()=> {
+describe("Testing request headers: not allowed HTTP methods", () => {
 
-//     it("gets the /api/login endpoint and sends request with not allowed method: GET", async () => {
-//         const response = await testApp.get("/api/login")
-//         expect(response.status).toBe(405)
-//     })
+    beforeAll(connect)
+    beforeEach(cleanData)
+    afterAll(disconnect)
 
-//     it("gets the /api/login endpoint and sends request with not allowed method: PUT", async () => {
-//         const response = await testApp.put("/api/login")
-//         expect(response.status).toBe(405)
-//     })
+    it("should return 405 when sending request with not allowed method (GET) to /api/login", async () => {
 
-//     it("gets the /api/login endpoint and sends request with not allowed method: PATCH", async () => {
-//         const response = await testApp.patch("/api/login")
-//         expect(response.status).toBe(405)
-//     })
+        // when
+        const response = await testApp.get("/api/login")
 
-//     it("gets the /api/login endpoint and sends request with not allowed method: DELETE", async () => {
-//         const response = await testApp.delete("/api/login")
-//         expect(response.status).toBe(405)
-//     })
-// })
+        //then
+        const createdUser = await User.find()
+        expect(createdUser).toHaveLength(0)
+        expect(response.status).toBe(405)
+    })
+
+    it("should return 405 when sending request with not allowed method (PUT) to /api/login", async () => {
+
+        // when
+        const response = await testApp.put("/api/login")
+
+        //then
+        const createdUser = await User.find()
+        expect(createdUser).toHaveLength(0)
+        expect(response.status).toBe(405)
+    })
+
+    it("should return 405 when sending request with not allowed method (PATCH) to /api/login", async () => {
+
+        // when
+        const response = await testApp.patch("/api/login")
+
+        //then
+        const createdUser = await User.find()
+        expect(createdUser).toHaveLength(0)
+        expect(response.status).toBe(405)
+    })
+
+    it("should return 405 when sending request with not allowed method (DELETE) to /api/login", async () => {
+
+        // when
+        const response = await testApp.delete("/api/login")
+
+        //then
+        const createdUser = await User.find()
+        expect(createdUser).toHaveLength(0)
+        expect(response.status).toBe(405)
+    })
+})
 
 
-// describe("Testing request body: missing or invalid bodies", ()=> {
+describe("Testing request body: missing, wrong format, expired Google authcode", () => {
 
-    // it("gets the /api/login endpoint and sends POST request without body", async () => {
-    //     const response = await testApp.post("/api/login")
-    //     expect(response.status).toBe(400)
-    // })
+    beforeAll(connect)
+    beforeEach(cleanData)
+    afterAll(disconnect)
 
-    // it("gets the /api/login endpoint and sends POST request with invalid body: incorrect property name", async () => {
-    //     const response = await testApp.post("/api/login").send({
-    //         authcode: "property's name should be code, the value should be string",
-    //     })
-    //     expect(response.status).toBe(400)
-    // })
+    it("should return 400 and not create user when sending POST request without body to /api/login", async () => {
 
-    // it("gets the /api/login endpoint and sends POST request with invalid body: incorrect value type", async () => {
-    //     const response = await testApp.post("/api/login")
-    //         .send({
-    //             code: 123456
-    //         })
-    //     expect(response.status).toBe(400)
-    // })
+        // given no body
 
-//     it("gets the /api/login endpoint and sends POST request with expired authcode", async () => {
-//         const response = await testApp.post("/api/login")
-//             .send({
-//                 code: 123456
-//             })
-//         expect(response.status).toBe(401)
-//     })
-// })
+        // when
+        const response = await testApp.post("/api/login")
+
+        // then
+        const createdUser = await User.find()
+        expect(createdUser).toHaveLength(0)
+        expect(response.status).toBe(400)
+    })
+
+    it("should return 400 and not create user when sending POST request with invalid body (incorrect property name) to /api/login", async () => {
+
+        // given
+        const authcode = "property's name should be code, the value should be string"
+
+        // when
+        const response = await testApp.post("/api/login").send({ authcode })
+
+        // then
+        const createdUser = await User.find()
+        expect(createdUser).toHaveLength(0)
+        expect(response.status).toBe(400)
+    })
+
+    it("should return 400 and not create user when sending POST request with invalid body (incorrect value type) to /api/login", async () => {
+
+        // given
+        const code = 123456
+
+        // when
+        const response = await testApp.post("/api/login").send({ code })
+
+        // then
+        const createdUser = await User.find()
+        expect(createdUser).toHaveLength(0)
+        expect(response.status).toBe(400)
+    })
+
+    it("should return 401 when gets the /api/login endpoint and sending POST request with expired authcode", async () => {
+
+        // given
+        const code = "4/F0AVHEtk4tnMrx0KUac5lUpGKACnuvwA9BtDa3ijHjpGTQ-TaasAYWgmYZm1BBHTEnN3anPQ"
+
+        // when
+        const response = await testApp.post("/api/login")
+            .send({ code })
+
+        // then
+        const createdUser = await User.find()
+        expect(createdUser).toHaveLength(0)
+        expect(response.status).toBe(401)
+    })
+})
 
 
 // ! A VALID BUT EXPIRED AND USED AUTHCODE: 4/F0AVHEtk4tnMrx0KUac5lUpGKACnuvwA9BtDa3ijHjpGTQ-TaasAYWgmYZm1BBHTEnN3anPQ
