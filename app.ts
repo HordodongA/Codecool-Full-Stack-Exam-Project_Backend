@@ -1,6 +1,3 @@
-// for testing...
-import dotenv from "dotenv"
-dotenv.config()
 import { env } from "./utilities/envParser"
 import express, { Express } from 'express'
 import cors from 'cors'

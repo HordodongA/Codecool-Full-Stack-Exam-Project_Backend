@@ -1,3 +1,5 @@
+import dotenv from "dotenv"
+dotenv.config({path: "../.env.test"})
 import supertest from "supertest"
 import app from "../app"
 

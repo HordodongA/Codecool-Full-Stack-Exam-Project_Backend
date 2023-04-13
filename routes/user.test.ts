@@ -1,3 +1,5 @@
+import dotenv from "dotenv"
+dotenv.config({path: "../.env.test"})
 import supertest from "supertest"
 import app from "../app"
 
@@ -46,7 +48,6 @@ const testApp = supertest(app)
 //         expect(response.status).toBe(400)
 //     })
 // })
-
 
 
 // * GET with valid token
