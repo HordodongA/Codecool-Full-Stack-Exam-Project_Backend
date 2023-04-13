@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from "zod"
 
 const envSchema = z.object({
   PORT: z.string().min(1),
@@ -7,6 +7,6 @@ const envSchema = z.object({
   REDIRECT_URI: z.string(),
   JWT_SECRET_KEY: z.string(),
   MONGO_DB_URL: z.string().min(1),
-});
+})
 
-export const env = envSchema.parse(process.env);
+export const env = envSchema.parse(process.env)
