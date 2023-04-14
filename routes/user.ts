@@ -52,7 +52,7 @@ router.put("/", validateRequestMw(userRequestSchema), async (req: Request, res: 
     const request = req.body as userRequestType
     const updatedUser = await User.findOneAndUpdate({ sub: res.locals.sub }, { $set: { "assets": request.assets } }, { new: true })
     // console.log(updatedUser)
-    if (!updatedUser) { return res.sendStatus(503) }
+    if (!updatedUser) { return res.sendStatus(404) }
     res.send(updatedUser)
 })
 
@@ -61,7 +61,7 @@ router.put("/", validateRequestMw(userRequestSchema), async (req: Request, res: 
 router.delete("/", async (req: Request, res: Response) => {
     console.log("A request reached /api/user DELETE endpoint")
     const deletedUser = await User.findOneAndDelete({ sub: res.locals.sub })
-    if (!deletedUser) { return res.sendStatus(503) }
+    if (!deletedUser) { return res.sendStatus(404) }
     res.sendStatus(204)
 })
 

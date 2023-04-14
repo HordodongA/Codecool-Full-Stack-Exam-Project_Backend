@@ -19,7 +19,7 @@ describe("Testing request headers: not allowed HTTP methods", () => {
         // when
         const response = await testApp.get("/api/login")
 
-        //then
+        // then
         const createdUser = await User.find()
         expect(createdUser).toHaveLength(0)
         expect(response.status).toBe(405)
@@ -30,7 +30,7 @@ describe("Testing request headers: not allowed HTTP methods", () => {
         // when
         const response = await testApp.put("/api/login")
 
-        //then
+        // then
         const createdUser = await User.find()
         expect(createdUser).toHaveLength(0)
         expect(response.status).toBe(405)
@@ -41,7 +41,7 @@ describe("Testing request headers: not allowed HTTP methods", () => {
         // when
         const response = await testApp.patch("/api/login")
 
-        //then
+        // then
         const createdUser = await User.find()
         expect(createdUser).toHaveLength(0)
         expect(response.status).toBe(405)
@@ -52,7 +52,7 @@ describe("Testing request headers: not allowed HTTP methods", () => {
         // when
         const response = await testApp.delete("/api/login")
 
-        //then
+        // then
         const createdUser = await User.find()
         expect(createdUser).toHaveLength(0)
         expect(response.status).toBe(405)
@@ -123,8 +123,7 @@ describe("Testing request body: missing, wrong format, expired Google authcode",
     })
 })
 
-
-// ! A VALID BUT EXPIRED AND USED AUTHCODE: 4/F0AVHEtk4tnMrx0KUac5lUpGKACnuvwA9BtDa3ijHjpGTQ-TaasAYWgmYZm1BBHTEnN3anPQ
+// ? polish: bring here test data, add mocked login
 
 // * Test scenarios
 // ? mocking

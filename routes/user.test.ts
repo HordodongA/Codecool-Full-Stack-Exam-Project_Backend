@@ -2,11 +2,56 @@ import dotenv from "dotenv"
 dotenv.config()
 import supertest from "supertest"
 import { connect, cleanData, disconnect } from "../mongodbMemoryServer/mongodb-memory-test-helper"
-import { User } from "../models/user"
+import { User, UserType } from "../models/user"
 import app from "../app"
 
 const testApp = supertest(app)
 
+const testDatas = {
+    testUserInitial: {
+        sub: "123456789",
+        assets: [{ name: "Grove street house", location: "San Andreas" }]
+    },
+    testUserUpdated: {
+        sub: "123456789",
+        assets: [
+            {
+                name: "Grove street house",
+                location: "San Andreas",
+                notes: "House of my granny",
+                activities: [
+                    {
+                        name: "gas man todos",
+                        todos: "review boyler, review gas heater, review gas meter"
+                    },
+                    {
+                        name: "gardener todos",
+                        todos: "purne trees, fertilize flowers"
+                    }
+                ]
+            },
+            {
+                name: "Los Santos flat",
+                location: "Los Santos",
+                notes: "Home sweet home",
+                machines: [
+                    {
+                        name: "air conditioner",
+                        todos: "cleaning filter, disinfect condenser, unclog condensate drain tube"
+                    },
+                    { name: "water fileter" }
+                ]
+            }
+        ]
+    },
+    sessionTokensForTesting: {
+        valid: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiVGVzdCBVc2VyIiwic3ViIjoiMTIzNDU2Nzg5IiwiZW1haWwiOiJ0ZXN0LXVzZXJAZ21haWwuY29tIiwicGljdHVyZSI6Imh0dHBzOi8vdGVzdC11c2VyLXBpY3R1cmUuY29tIiwiaWF0IjoxNjgxNDcxNzExfQ.IC2OAsC9NfXR-rrJt4_kfUHyQQ1SNvOT5uaRIB46KN8",                   // existing user, can't expire, valid format and signature
+        expired: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiVGVzdCBVc2VyIiwic3ViIjoiMTIzNDU2Nzg5IiwiZW1haWwiOiJ0ZXN0LXVzZXJAZ21haWwuY29tIiwicGljdHVyZSI6Imh0dHBzOi8vdGVzdC11c2VyLXBpY3R1cmUuY29tIiwiaWF0IjoxNjgxNDcxNzExLCJleHAiOjE2ODE0NzE3MTV9.HPshjsJK9XyG20gPA_wh35vg3IPw-esLSiTzoKHOXVc",
+        invalidSignature: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiVGVzdCBVc2VyIiwic3ViIjoiMTIzNDU2Nzg5IiwiZW1haWwiOiJ0ZXN0LXVzZXJAZ21haWwuY29tIiwicGljdHVyZSI6Imh0dHBzOi8vdGVzdC11c2VyLXBpY3R1cmUuY29tIiwiaWF0IjoxNjgxNDcxNzExfQ.1IXI6IHaW7Bw1ZR-crV4YLFy4Qk1FsxUoAkeRh_29W4",
+        invalidPayload: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiVGVzdCBVc2VyIiwicGljdHVyZSI6Imh0dHBzOi8vdGVzdC11c2VyIiwiaWF0IjoxNjgxNDcxNzExfQ.fo92xga3kZABy-cyAkD6cBKXMuSMrVKnluskaQktvHg",
+        nonExistingUserSub: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiVGVzdCBVc2VyIiwic3ViIjoiMDAwMDAwMDAwIiwiZW1haWwiOiJ0ZXN0LXVzZXJAZ21haWwuY29tIiwicGljdHVyZSI6Imh0dHBzOi8vdGVzdC11c2VyLXBpY3R1cmUuY29tIiwiaWF0IjoxNjgxNDcxNzExfQ.6xdfIKMj0hvAg9wrff5sBIMp9KUlI21GEKYhvGZvOe0",
+    }
+}
 
 describe("Testing request headers: not allowed HTTP methods", () => {
 
@@ -19,7 +64,7 @@ describe("Testing request headers: not allowed HTTP methods", () => {
         // when
         const response = await testApp.post("/api/user")
 
-        //then
+        // then
         const createdUser = await User.find()
         expect(createdUser).toHaveLength(0)
         expect(response.status).toBe(405)
@@ -30,7 +75,7 @@ describe("Testing request headers: not allowed HTTP methods", () => {
         // when
         const response = await testApp.patch("/api/user")
 
-        //then
+        // then
         const createdUser = await User.find()
         expect(createdUser).toHaveLength(0)
         expect(response.status).toBe(405)
@@ -44,7 +89,6 @@ describe("Testing the session token in authorization headers", () => {
     beforeEach(cleanData)
     afterAll(disconnect)
 
-
     it("should return 401 when sending GET request without session token to /api/user", async () => {
 
         // given no token
@@ -52,7 +96,7 @@ describe("Testing the session token in authorization headers", () => {
         // when
         const response = await testApp.get("/api/user")
 
-        //then
+        // then
         const createdUser = await User.find()
         expect(createdUser).toHaveLength(0)
         expect(response.status).toBe(401)
@@ -61,12 +105,12 @@ describe("Testing the session token in authorization headers", () => {
     it("should return 401 when sending GET request with expired session token to /api/user", async () => {
 
         // given
-        const expiredToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiR2Fib3IgTmV1YmF1ZXIiLCJzdWIiOiIxMTEzNDI5NTMyNzk2NDc5NjY0MjUiLCJlbWFpbCI6ImdhYm9ybmV1YmF1ZXIuaGRhQGdtYWlsLmNvbSIsInBpY3R1cmUiOiJodHRwczovL2xoMy5nb29nbGV1c2VyY29udGVudC5jb20vYS9BR05teXhhU0FjNGNJMHJ1YU4xZHlweDZIaFVNRHoxSkpNRGs1dmNWT0pBYjF3PXM5Ni1jIiwiaWF0IjoxNjgxMzEyODIwLCJleHAiOjE2ODEzMTI4MzB9.qH-ww7FIBwwMkdBfmoX5-GQK3TFMtRUDg6xJRrwQ6Vg"
+        const sessionToken = testDatas.sessionTokensForTesting.expired
 
         // when
-        const response = await testApp.get("/api/user").set({ authorization: expiredToken })
+        const response = await testApp.get("/api/user").set({ authorization: sessionToken })
 
-        //then
+        // then
         const createdUser = await User.find()
         expect(createdUser).toHaveLength(0)
         expect(response.status).toBe(401)
@@ -75,26 +119,26 @@ describe("Testing the session token in authorization headers", () => {
     it("should return 401 when sending GET request with invalid signature session token to /api/user", async () => {
 
         // given
-        const signatureInvalidToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiR2Fib3IgTmV1YmF1ZXIiLCJzdWIiOiIxMTEzNDI5NTMyNzk2NDc5NjY0MjUiLCJlbWFpbCI6ImdhYm9ybmV1YmF1ZXIuaGRhQGdtYWlsLmNvbSIsInBpY3R1cmUiOiJodHRwczovL2xoMy5nb29nbGV1c2VyY29udGVudC5jb20vYS9BR05teXhhU0FjNGNJMHJ1YU4xZHlweDZIaFVNRHoxSkpNRGs1dmNWT0pBYjF3PXM5Ni1jIiwiaWF0IjoxNjgxMzEzMDY2fQ.dytCjUA3C07gzDnz5axpWiqfay1OzHPk77IAQlg4nw"
+        const sessionToken = testDatas.sessionTokensForTesting.invalidSignature
 
         // when
-        const response = await testApp.get("/api/user").set({ authorization: signatureInvalidToken })
+        const response = await testApp.get("/api/user").set({ authorization: sessionToken })
 
-        //then
+        // then
         const createdUser = await User.find()
         expect(createdUser).toHaveLength(0)
         expect(response.status).toBe(401)
     })
 
-    it("should return 400 when sending GET request with invalid payload (missing name property) session token to /api/user", async () => {
+    it("should return 400 when sending GET request with invalid payload (missing name, sub, email properties) session token to /api/user", async () => {
 
         // given
-        const payloadInvalidToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMTEzNDI5NTMyNzk2NDc5NjY0MjUiLCJlbWFpbCI6ImdhYm9ybmV1YmF1ZXIuaGRhQGdtYWlsLmNvbSIsInBpY3R1cmUiOiJodHRwczovL2xoMy5nb29nbGV1c2VyY29udGVudC5jb20vYS9BR05teXhhU0FjNGNJMHJ1YU4xZHlweDZIaFVNRHoxSkpNRGs1dmNWT0pBYjF3PXM5Ni1jIiwiaWF0IjoxNjgxMzEzMDY2fQ.ymnacZEbNOLvO-jrno4C8dKRvP9id6C2xZPGxDeu8TA"
+        const sessionToken = testDatas.sessionTokensForTesting.invalidPayload
 
         // when
-        const response = await testApp.get("/api/login").set({ authorization: payloadInvalidToken })
+        const response = await testApp.get("/api/login").set({ authorization: sessionToken })
 
-        //then
+        // then
         const createdUser = await User.find()
         expect(createdUser).toHaveLength(0)
         expect(response.status).toBe(400)
@@ -102,170 +146,124 @@ describe("Testing the session token in authorization headers", () => {
 })
 
 
-
-
-// * PUT valid body => 400
-// ! need to transform: before all: login & chane db connection to memory server
-// describe("modify user object test", () => {
-//     it("gets the /api/user endpoint and sends PUT request with valid body", async () => {
-//         const validToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiR2Fib3IgTmV1YmF1ZXIiLCJzdWIiOiIxMTEzNDI5NTMyNzk2NDc5NjY0MjUiLCJlbWFpbCI6ImdhYm9ybmV1YmF1ZXIuaGRhQGdtYWlsLmNvbSIsInBpY3R1cmUiOiJodHRwczovL2xoMy5nb29nbGV1c2VyY29udGVudC5jb20vYS9BR05teXhhU0FjNGNJMHJ1YU4xZHlweDZIaFVNRHoxSkpNRGs1dmNWT0pBYjF3PXM5Ni1jIiwiaWF0IjoxNjgxMzEzMDY2fQ.dytCjUA3C0V7gzDnz5axpWiqfay1OzHPk77IAQlg4nw"
-//         const validBody = {
-//             sub: "111342953279647966425",
-//             assets: [
-//                 {
-//                     name: "Grove street",
-//                     location: "San Andreas",
-//                     notes: "My granny"s house",
-//                     activities: [
-//                         {
-//                             name: "activity one",
-//                             todos: "nem szarni a szoba közepére"
-//                         },
-//                         { name: "activity two" }
-//                     ]
-//                 },
-//                 {
-//                     name: "Kertvárosi lakás",
-//                     location: "Kertváros",
-//                     notes: "Home sweet home",
-//                     machines: [
-//                         {
-//                             name: "machine one",
-//                             todos: "befújni WD40-nel"
-//                         },
-//                         { name: "machine two" }
-//                     ]
-//                 }
-//             ]
-//         }
-//         const response = await testApp.put("/api/user")
-//             .send(validBody)
-//             .set({
-//                 "authorization": validToken,
-//                 "Content-Type": "application/json"
-//             })
-//         expect(response.status).toBe(200)
-//     })
-// })
-
-// * DELETE with valid token
-// ! need to transform: before all: login, save to db, after delete: find in db & chane db connection to memory server
-// describe("delete user object test", () => {
-//     it("gets the /api/user endpoint and sends DELETE request", async () => {
-//         const validToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiR2Fib3IgTmV1YmF1ZXIiLCJzdWIiOiIxMTEzNDI5NTMyNzk2NDc5NjY0MjUiLCJlbWFpbCI6ImdhYm9ybmV1YmF1ZXIuaGRhQGdtYWlsLmNvbSIsInBpY3R1cmUiOiJodHRwczovL2xoMy5nb29nbGV1c2VyY29udGVudC5jb20vYS9BR05teXhhU0FjNGNJMHJ1YU4xZHlweDZIaFVNRHoxSkpNRGs1dmNWT0pBYjF3PXM5Ni1jIiwiaWF0IjoxNjgxMzEzMDY2fQ.dytCjUA3C0V7gzDnz5axpWiqfay1OzHPk77IAQlg4nw"
-//         const response = await testApp.delete("/api/user")
-//             .set({ "authorization": validToken })
-//         expect(response.status).toBe(204)
-//     })
-// })
-
-
-
-
-
-
 describe("Testing GET user object", () => {
 
     beforeAll(connect)
-    beforeEach(async () => {
-        const testUser = {
-            sub: "111342953279647966425",                                    // ! cserélni a subot itt és a tokenben
-            assets: [{ name: "Grove street", location: "San Andreas" }]
-        }
-        await User.create(testUser)
-    })
+    beforeEach(async () => { await User.create(testDatas.testUserInitial) })
     afterEach(cleanData)
     afterAll(disconnect)
+
+    it("should return 200 and user object when sending GET request to /api/user", async () => {
+        // given
+        const sessionToken = testDatas.sessionTokensForTesting.valid
+
+        // when
+        const response = await testApp.get("/api/user").set({ "authorization": sessionToken })
+
+        // then
+        expect(response.body).not.toBe({})
+        expect(response.body.assets[0].name).toBe("Grove street house")
+        expect(response.status).toBe(200)
+    })
 
     it("should return 404 when sending GET request with non-existing user sub to /api/user", async () => {
 
         // given
-        const nonExistingSubToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiR2Fib3IgTmV1YmF1ZXIiLCJzdWIiOiIxMTM0Mjk1MzI3OTY0Nzk2NjQyNiIsImVtYWlsIjoiZ2Fib3JuZXViYXVlci5oZGFAZ21haWwuY29tIiwicGljdHVyZSI6Imh0dHBzOi8vbGgzLmdvb2dsZXVzZXJjb250ZW50LmNvbS9hL0FHTm15eGFTQWM0Y0kwcnVhTjFkeXB4NkhoVU1EejFKSk1EazV2Y1ZPSkFiMXc9czk2LWMiLCJpYXQiOjE2ODEzMTMwNjZ9.AKMtmwGkvDWU8-drSAa-REN1E80C70saEpsC-QJaDgk"
+        const sessionToken = testDatas.sessionTokensForTesting.nonExistingUserSub
 
-        //when
-        const response = await testApp.get("/api/user").set({ "authorization": nonExistingSubToken })
+        // when
+        const response = await testApp.get("/api/user").set({ "authorization": sessionToken })
 
         // then
         expect(JSON.stringify(response.body)).toBe("{}")
         expect(response.status).toBe(404)
     })
-
-    it("should return 200 and user object when sending GET request to /api/user", async () => {
-        // given
-        // ! set demo token's sub to demo user's sub
-        const validToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiR2Fib3IgTmV1YmF1ZXIiLCJzdWIiOiIxMTEzNDI5NTMyNzk2NDc5NjY0MjUiLCJlbWFpbCI6ImdhYm9ybmV1YmF1ZXIuaGRhQGdtYWlsLmNvbSIsInBpY3R1cmUiOiJodHRwczovL2xoMy5nb29nbGV1c2VyY29udGVudC5jb20vYS9BR05teXhhU0FjNGNJMHJ1YU4xZHlweDZIaFVNRHoxSkpNRGs1dmNWT0pBYjF3PXM5Ni1jIiwiaWF0IjoxNjgxMzEzMDY2fQ.dytCjUA3C0V7gzDnz5axpWiqfay1OzHPk77IAQlg4nw"
-
-        //when
-        const response = await testApp.get("/api/user").set({ "authorization": validToken })
-
-        // then
-        expect(response.body).not.toBe({})
-        expect(response.body.assets[0].name).toBe("Grove street")
-        expect(response.status).toBe(200)
-    })
 })
 
 
-
-// * PUT non-existing sub => 503
-// ! need to transform: before all: login & chane db connection to memory server
-describe("Testing modify user object", () => {
+describe("Testing modify (PUT) user object", () => {
 
     beforeAll(connect)
-    beforeEach(cleanData)
+    beforeEach(async () => { await User.create(testDatas.testUserInitial) })
+    afterEach(cleanData)
     afterAll(disconnect)
 
-    it("should return 503 when sending PUT request with non-existing user sub to /api/user", async () => {
+    it("should return 200 and updated user object when sending PUT request to /api/user", async () => {
 
         // given
-        const nonExistingSubToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiR2Fib3IgTmV1YmF1ZXIiLCJzdWIiOiIxMTM0Mjk1MzI3OTY0Nzk2NjQyNiIsImVtYWlsIjoiZ2Fib3JuZXViYXVlci5oZGFAZ21haWwuY29tIiwicGljdHVyZSI6Imh0dHBzOi8vbGgzLmdvb2dsZXVzZXJjb250ZW50LmNvbS9hL0FHTm15eGFTQWM0Y0kwcnVhTjFkeXB4NkhoVU1EejFKSk1EazV2Y1ZPSkFiMXc9czk2LWMiLCJpYXQiOjE2ODEzMTMwNjZ9.AKMtmwGkvDWU8-drSAa-REN1E80C70saEpsC-QJaDgk"
-        const validBody = { sub: "111342953279647966425", assets: [{ name: "Grove street" }] }
+        const sessionToken = testDatas.sessionTokensForTesting.valid
+        const update = testDatas.testUserUpdated
 
         //when
         const response = await testApp.put("/api/user")
-            .send(validBody)
-            .set({
-                "authorization": nonExistingSubToken,
-                "Content-Type": "application/json"
-            })
+            .send(update)
+            .set({ "authorization": sessionToken, "Content-Type": "application/json" })
 
         // then
-        expect(response.status).toBe(503)
+        expect(response.body.assets[1].machines[0].name).toBe("air conditioner")
+        expect(response.status).toBe(200)
     })
-})
 
-
-
-// * DELETE a non-existing document
-// ! need to transform: before all: login, save to db, after delete: find in db & chane db connection to memory server
-
-describe("Testing delete user object", () => {
-
-    beforeAll(connect)
-    beforeEach(cleanData)
-    afterAll(disconnect)
-
-    it("should return 503 when sending DELETE request with non-existing user sub to /api/user", async () => {
+    it("should return 404 when sending PUT request with non-existing user sub to /api/user", async () => {
 
         // given
-        const nonExistingSubToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiR2Fib3IgTmV1YmF1ZXIiLCJzdWIiOiIxMTM0Mjk1MzI3OTY0Nzk2NjQyNiIsImVtYWlsIjoiZ2Fib3JuZXViYXVlci5oZGFAZ21haWwuY29tIiwicGljdHVyZSI6Imh0dHBzOi8vbGgzLmdvb2dsZXVzZXJjb250ZW50LmNvbS9hL0FHTm15eGFTQWM0Y0kwcnVhTjFkeXB4NkhoVU1EejFKSk1EazV2Y1ZPSkFiMXc9czk2LWMiLCJpYXQiOjE2ODEzMTMwNjZ9.AKMtmwGkvDWU8-drSAa-REN1E80C70saEpsC-QJaDgk"
+        const sessionToken = testDatas.sessionTokensForTesting.nonExistingUserSub
+        const update = testDatas.testUserUpdated
 
-        // when
-        const response = await testApp.delete("/api/user").set({ "authorization": nonExistingSubToken })
+        //when
+        const response = await testApp.put("/api/user")
+            .send(update)
+            .set({ "authorization": sessionToken, "Content-Type": "application/json" })
 
         // then
-        expect(response.status).toBe(503)
+        expect(response.status).toBe(404)
     })
 })
 
 
-// ? polish: it should return 400 when ..., env.test if needed, given: set data- when: response-then:expect
+describe("Testing DELETE user object", () => {
 
-// ! A VALID TOKEN (can"t expire): eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiR2Fib3IgTmV1YmF1ZXIiLCJzdWIiOiIxMTEzNDI5NTMyNzk2NDc5NjY0MjUiLCJlbWFpbCI6ImdhYm9ybmV1YmF1ZXIuaGRhQGdtYWlsLmNvbSIsInBpY3R1cmUiOiJodHRwczovL2xoMy5nb29nbGV1c2VyY29udGVudC5jb20vYS9BR05teXhhU0FjNGNJMHJ1YU4xZHlweDZIaFVNRHoxSkpNRGs1dmNWT0pBYjF3PXM5Ni1jIiwiaWF0IjoxNjgxMzEzMDY2fQ.dytCjUA3C0V7gzDnz5axpWiqfay1OzHPk77IAQlg4nw
+    beforeAll(connect)
+    beforeEach(async () => { await User.create(testDatas.testUserInitial) })
+    afterEach(cleanData)
+    afterAll(disconnect)
+
+    it("should return 204 when sending DELETE request with existing user sub to /api/user", async () => {
+
+        // given
+        const sessionToken = testDatas.sessionTokensForTesting.valid
+
+        // when
+        const response = await testApp.delete("/api/user")
+            .set({ "authorization": sessionToken })
+
+        // then
+        const testUser = await User.find()
+        expect(testUser).toHaveLength(0)
+        expect(response.status).toBe(204)
+    })
+
+    it("should return 404 when sending DELETE request with non-existing user sub to /api/user", async () => {
+
+        // given
+        const sessionToken = testDatas.sessionTokensForTesting.nonExistingUserSub
+
+        // when
+        const response = await testApp.delete("/api/user").set({ "authorization": sessionToken })
+
+        // then
+        const testUser = await User.find()
+        expect(testUser).toHaveLength(1)
+        expect(response.status).toBe(404)
+    })
+})
+
+
+// ? polish: mocked login function add
 
 
     // given
-    //when
+    // when
     // then
 
 

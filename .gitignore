@@ -2,3 +2,4 @@ node_modules
 dist
 notes_and_drafts
 .vscode
+.env
