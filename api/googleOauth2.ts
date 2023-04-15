@@ -8,9 +8,9 @@ const ResponseSchema = z.object({
     id_token: z.string(),
     // access_token: z.string(),
     // refresh_token: z.string(),
-    expires_in: z.number(),
-    scope: z.string(),
-    token_type: z.literal("Bearer")
+    // expires_in: z.number(),
+    // scope: z.string(),
+    // token_type: z.literal("Bearer")
 })
 type ResponseType = z.infer<typeof ResponseSchema>
 

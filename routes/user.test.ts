@@ -2,12 +2,12 @@ import dotenv from "dotenv"
 dotenv.config()
 import supertest from "supertest"
 import { connect, cleanData, disconnect } from "../mongodbMemoryServer/mongodb-memory-test-helper"
-import { User, UserType } from "../models/user"
+import { User } from "../models/user"
 import app from "../app"
 
 const testApp = supertest(app)
 
-const testDatas = {
+const testData = {
     testUserInitial: {
         sub: "123456789",
         assets: [{ name: "Grove street house", location: "San Andreas" }]
@@ -44,7 +44,7 @@ const testDatas = {
             }
         ]
     },
-    sessionTokensForTesting: {
+    sessionTokens: {
         valid: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiVGVzdCBVc2VyIiwic3ViIjoiMTIzNDU2Nzg5IiwiZW1haWwiOiJ0ZXN0LXVzZXJAZ21haWwuY29tIiwicGljdHVyZSI6Imh0dHBzOi8vdGVzdC11c2VyLXBpY3R1cmUuY29tIiwiaWF0IjoxNjgxNDcxNzExfQ.IC2OAsC9NfXR-rrJt4_kfUHyQQ1SNvOT5uaRIB46KN8",                   // existing user, can't expire, valid format and signature
         expired: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiVGVzdCBVc2VyIiwic3ViIjoiMTIzNDU2Nzg5IiwiZW1haWwiOiJ0ZXN0LXVzZXJAZ21haWwuY29tIiwicGljdHVyZSI6Imh0dHBzOi8vdGVzdC11c2VyLXBpY3R1cmUuY29tIiwiaWF0IjoxNjgxNDcxNzExLCJleHAiOjE2ODE0NzE3MTV9.HPshjsJK9XyG20gPA_wh35vg3IPw-esLSiTzoKHOXVc",
         invalidSignature: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiVGVzdCBVc2VyIiwic3ViIjoiMTIzNDU2Nzg5IiwiZW1haWwiOiJ0ZXN0LXVzZXJAZ21haWwuY29tIiwicGljdHVyZSI6Imh0dHBzOi8vdGVzdC11c2VyLXBpY3R1cmUuY29tIiwiaWF0IjoxNjgxNDcxNzExfQ.1IXI6IHaW7Bw1ZR-crV4YLFy4Qk1FsxUoAkeRh_29W4",
@@ -105,7 +105,7 @@ describe("Testing the session token in authorization headers", () => {
     it("should return 401 when sending GET request with expired session token to /api/user", async () => {
 
         // given
-        const sessionToken = testDatas.sessionTokensForTesting.expired
+        const sessionToken = testData.sessionTokens.expired
 
         // when
         const response = await testApp.get("/api/user").set({ authorization: sessionToken })
@@ -119,7 +119,7 @@ describe("Testing the session token in authorization headers", () => {
     it("should return 401 when sending GET request with invalid signature session token to /api/user", async () => {
 
         // given
-        const sessionToken = testDatas.sessionTokensForTesting.invalidSignature
+        const sessionToken = testData.sessionTokens.invalidSignature
 
         // when
         const response = await testApp.get("/api/user").set({ authorization: sessionToken })
@@ -133,7 +133,7 @@ describe("Testing the session token in authorization headers", () => {
     it("should return 400 when sending GET request with invalid payload (missing name, sub, email properties) session token to /api/user", async () => {
 
         // given
-        const sessionToken = testDatas.sessionTokensForTesting.invalidPayload
+        const sessionToken = testData.sessionTokens.invalidPayload
 
         // when
         const response = await testApp.get("/api/login").set({ authorization: sessionToken })
@@ -149,13 +149,13 @@ describe("Testing the session token in authorization headers", () => {
 describe("Testing GET user object", () => {
 
     beforeAll(connect)
-    beforeEach(async () => { await User.create(testDatas.testUserInitial) })
+    beforeEach(async () => { await User.create(testData.testUserInitial) })
     afterEach(cleanData)
     afterAll(disconnect)
 
     it("should return 200 and user object when sending GET request to /api/user", async () => {
         // given
-        const sessionToken = testDatas.sessionTokensForTesting.valid
+        const sessionToken = testData.sessionTokens.valid
 
         // when
         const response = await testApp.get("/api/user").set({ "authorization": sessionToken })
@@ -169,7 +169,7 @@ describe("Testing GET user object", () => {
     it("should return 404 when sending GET request with non-existing user sub to /api/user", async () => {
 
         // given
-        const sessionToken = testDatas.sessionTokensForTesting.nonExistingUserSub
+        const sessionToken = testData.sessionTokens.nonExistingUserSub
 
         // when
         const response = await testApp.get("/api/user").set({ "authorization": sessionToken })
@@ -184,15 +184,15 @@ describe("Testing GET user object", () => {
 describe("Testing modify (PUT) user object", () => {
 
     beforeAll(connect)
-    beforeEach(async () => { await User.create(testDatas.testUserInitial) })
+    beforeEach(async () => { await User.create(testData.testUserInitial) })
     afterEach(cleanData)
     afterAll(disconnect)
 
     it("should return 200 and updated user object when sending PUT request to /api/user", async () => {
 
         // given
-        const sessionToken = testDatas.sessionTokensForTesting.valid
-        const update = testDatas.testUserUpdated
+        const sessionToken = testData.sessionTokens.valid
+        const update = testData.testUserUpdated
 
         //when
         const response = await testApp.put("/api/user")
@@ -207,8 +207,8 @@ describe("Testing modify (PUT) user object", () => {
     it("should return 404 when sending PUT request with non-existing user sub to /api/user", async () => {
 
         // given
-        const sessionToken = testDatas.sessionTokensForTesting.nonExistingUserSub
-        const update = testDatas.testUserUpdated
+        const sessionToken = testData.sessionTokens.nonExistingUserSub
+        const update = testData.testUserUpdated
 
         //when
         const response = await testApp.put("/api/user")
@@ -224,14 +224,14 @@ describe("Testing modify (PUT) user object", () => {
 describe("Testing DELETE user object", () => {
 
     beforeAll(connect)
-    beforeEach(async () => { await User.create(testDatas.testUserInitial) })
+    beforeEach(async () => { await User.create(testData.testUserInitial) })
     afterEach(cleanData)
     afterAll(disconnect)
 
     it("should return 204 when sending DELETE request with existing user sub to /api/user", async () => {
 
         // given
-        const sessionToken = testDatas.sessionTokensForTesting.valid
+        const sessionToken = testData.sessionTokens.valid
 
         // when
         const response = await testApp.delete("/api/user")
@@ -246,7 +246,7 @@ describe("Testing DELETE user object", () => {
     it("should return 404 when sending DELETE request with non-existing user sub to /api/user", async () => {
 
         // given
-        const sessionToken = testDatas.sessionTokensForTesting.nonExistingUserSub
+        const sessionToken = testData.sessionTokens.nonExistingUserSub
 
         // when
         const response = await testApp.delete("/api/user").set({ "authorization": sessionToken })
@@ -257,24 +257,3 @@ describe("Testing DELETE user object", () => {
         expect(response.status).toBe(404)
     })
 })
-
-
-// ? polish: mocked login function add
-
-
-    // given
-    // when
-    // then
-
-
-// ? HTTP status codes
-// 200 OK
-// 201 Created
-// 204 No content
-// 400 Bad request
-// 401 Unauthorized
-// 403 Forbidden
-// 404 Not found
-// 405 Method not allowed
-// 500 Internal server error
-// 503 Service not availabla (e. g. Mongo DB)
