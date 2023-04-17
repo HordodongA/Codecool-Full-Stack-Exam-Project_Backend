@@ -5,7 +5,7 @@ info:
     Simple API for Landlord maintenance assist webapplication. The API based on REST software architectural style. It accepts JSON-encoded request bodies and returns JSON-encoded responses. It handles user management with Google Oauth2 standards and uses No-SQL database to store user's data.
   contact:
     email: gaborneubaue.hda@gmail.com
-  version: 1.0.0
+  version: 1.0.1
 servers:
   - url: http://localhost:3003/api
 tags:
@@ -98,7 +98,6 @@ paths:
           $ref: '#/components/responses/405'
 
 
-
 components:
 
   responses:
@@ -167,7 +166,7 @@ components:
       properties:
         sub:
           type: string
-          example: "example-sub"
+          example: "1234567890"
         assets:
           type: array
           items:
@@ -177,19 +176,19 @@ components:
             properties:
               name:
                 type: string
-                example: ""
+                example: "Flat in Kertvaros"
               location:
                 type: string
-                example: ""
+                example: "Pecs, Aidinger str. 20."
               credentials:
                 type: string
-                example: ""
+                example: "16823/A/2/12-hrsz"
               details:
                 type: string
-                example: ""
+                example: "3rd floor, 63 m2, 3 rooms"
               notes:
                 type: string
-                example: ""
+                example: "Janitor: Kiss Ibolya, 06-30/235-5566"
               activities:
                 type: array
                 items:
@@ -197,10 +196,10 @@ components:
                   properties:
                     name:
                       type: string
-                      example: ""
+                      example: "plumbing todos"
                     todos:
                       type: string
-                      example: ""
+                      example: "inspect pipes and faucets for leaks and clogs, change water cleaner filter "
                   required:
                     - name
               machines:
@@ -210,19 +209,19 @@ components:
                   properties:
                     name:
                       type: string
-                      example: ""
+                      example: "dishwasher"
                     model:
                       type: string
                       example: ""
                     unique_id:
                       type: string
-                      example: ""
+                      example: "IND-220065-EU-845762558"
                     service:
                       type: string
-                      example: ""
+                      example: "Express Household Appliance: 06-70/555-6688"
                     todos:
                       type: string
-                      example: ""
+                      example: "cehck and refill regeneration salt and rins ad, check and clean dirt filter"
                   required:
                     - name
 
