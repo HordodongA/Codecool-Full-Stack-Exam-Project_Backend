@@ -1,0 +1,233 @@
+openapi: 3.0.3
+info:
+  title: Landlord - maintenance assist API
+  description: |-
+    Simple API for Landlord maintenance assist webapplication. The API based on REST software architectural style. It accepts JSON-encoded request bodies and returns JSON-encoded responses. It handles user management with Google Oauth2 standards and uses No-SQL database to store user's data.
+  contact:
+    email: gaborneubaue.hda@gmail.com
+  version: 1.0.0
+servers:
+  - url: http://localhost:3003/api
+tags:
+  - name: login
+    description: Managing login with Google and saving user
+  - name: user
+    description: Operations about user
+#  - name: docs
+#    description: Serving API documentation
+paths:
+  /login:
+    post:
+      tags:
+        - login
+      summary: Logs user into the system and save user's data
+      description: "After authentication the server seaches for user in databes. If user is new, the server creates a user document in database. In both cases server generates and signs a session jwt with user's name, email address, profile picture url and unique sub in payload. Session token is sent to client in response body. "
+      requestBody:
+            $ref: '#/components/requestBodies/Login'
+      responses:
+        '200':
+          $ref: '#/components/responses/200-login'
+        '400':
+          $ref: '#/components/responses/400-login'
+        '401':
+          $ref: '#/components/responses/401-login'
+        '405':
+          $ref: '#/components/responses/405'
+        '503':
+          $ref: '#/components/responses/503-login'
+  /user:
+    get:
+      tags:
+        - user
+      summary: Retrieves an existing user
+      description: "Returns a user object indentified by user's unique sub"
+      security:
+       - authorization: []
+      responses:
+        '200':
+          $ref: '#/components/responses/200-user'
+        '400':
+          $ref: '#/components/responses/400-user'
+        '401':
+          $ref: '#/components/responses/401-user'
+        '404':
+          $ref: '#/components/responses/404-user'
+        '405':
+          $ref: '#/components/responses/405'
+    put:
+      tags:
+        - user
+      summary: Updates an existent user
+      description: Returns the updated user object
+      security:
+       - authorization: []
+      requestBody:
+         $ref: '#/components/requestBodies/User'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:  
+                $ref: '#/components/schemas/UserObject'
+        '400':
+          $ref: '#/components/responses/400-user'
+        '401':
+          $ref: '#/components/responses/401-user'
+        '404':
+          $ref: '#/components/responses/404-user'
+        '405':
+          $ref: '#/components/responses/405'
+    delete:
+      tags:
+        - user
+      summary: Deletes a user
+      description: "Returns 204 when user is permanently removed from database with it's all data"
+      security:
+       - authorization: []
+      responses:
+        '204':
+          $ref: '#/components/responses/204-user'
+        '400':
+          $ref: '#/components/responses/400-user'
+        '401':
+          $ref: '#/components/responses/401-user'
+        '404':
+          $ref: '#/components/responses/404-user'
+        '405':
+          $ref: '#/components/responses/405'
+
+
+
+components:
+
+  responses:
+    200-login:
+      description: successful operation
+      content:
+        application/json:
+          schema: 
+            $ref: '#/components/schemas/LoginResponseBodyObject'
+    200-user:
+      description: successful operation
+      content:
+        application/json:
+          schema:  
+            $ref: '#/components/schemas/UserObject'
+    204-user:
+      description: Successful operation
+    400-login:
+      description: No body supplied or invalid format of body supplied
+    400-user:
+      description: Outdated session token (payload content)
+    401-login:
+      description: The supplied authcode is not accepted by Google API. It was expired or corrupted
+    401-user:
+      description: Session token is missing or expired or signature is invalid
+    404-user:
+      description: Requested user is not exists in database
+    405:
+      description: Request's http method not allowed
+    503-login:
+      description: Login service unaviable. Google's id_token is deficient
+
+  requestBodies:
+    Login:
+      required: true
+      description: "Sending authcode from Google's redirect uri"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/LoginRequestBodyObject'
+    User:
+      required: true
+      description: The new user object for update database
+      content:
+       application/json:
+          schema:
+            $ref: '#/components/schemas/UserObject'
+
+  schemas:
+    LoginRequestBodyObject:
+      type: object
+      properties:
+        code:
+          type: string
+          example: random code string
+    LoginResponseBodyObject:
+      type: object
+      properties:
+        sessionToken:
+          type: string
+          example: standard and signed jwt as string
+    UserObject:
+      required:
+        - sub
+      type: object
+      properties:
+        sub:
+          type: string
+          example: "example-sub"
+        assets:
+          type: array
+          items:
+            type: object
+            required:
+              - name
+            properties:
+              name:
+                type: string
+                example: ""
+              location:
+                type: string
+                example: ""
+              credentials:
+                type: string
+                example: ""
+              details:
+                type: string
+                example: ""
+              notes:
+                type: string
+                example: ""
+              activities:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                      example: ""
+                    todos:
+                      type: string
+                      example: ""
+                  required:
+                    - name
+              machines:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                      example: ""
+                    model:
+                      type: string
+                      example: ""
+                    unique_id:
+                      type: string
+                      example: ""
+                    service:
+                      type: string
+                      example: ""
+                    todos:
+                      type: string
+                      example: ""
+                  required:
+                    - name
+
+  securitySchemes:
+    authorization:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

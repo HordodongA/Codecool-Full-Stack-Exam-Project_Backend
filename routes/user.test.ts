@@ -1,8 +1,8 @@
 import dotenv from "dotenv"
 dotenv.config()
+import { User } from "../models/user"
 import supertest from "supertest"
 import { connect, cleanData, disconnect } from "../mongodbMemoryServer/mongodb-memory-test-helper"
-import { User } from "../models/user"
 import app from "../app"
 
 const testApp = supertest(app)

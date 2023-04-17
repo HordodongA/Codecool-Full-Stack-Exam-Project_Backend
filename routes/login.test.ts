@@ -1,7 +1,7 @@
 import dotenv from "dotenv"
 dotenv.config()
-import { connect, cleanData, disconnect } from "../mongodbMemoryServer/mongodb-memory-test-helper"
 import { User } from "../models/user"
+import { connect, cleanData, disconnect } from "../mongodbMemoryServer/mongodb-memory-test-helper"
 import supertest from "supertest"
 import app from "../app"
 
