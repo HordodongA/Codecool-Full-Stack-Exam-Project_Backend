@@ -23,6 +23,7 @@ const AssetSchema = new Schema({
         required: true,
         type: String,
     },
+    address: String,
     location: String,
     credentials: String,
     details: String,
