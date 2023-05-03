@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express"
 import jwt from "jsonwebtoken"
 import { blueBright } from 'console-log-colors';
-import  env  from "../utilities/envParser"
+import env from "../utilities/envParser"
 import { PayloadSchema } from "../routes/login"
 import  safeParserFc  from "../utilities/safeParser"
 

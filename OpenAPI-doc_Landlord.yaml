@@ -5,27 +5,38 @@ info:
     Simple API for Landlord maintenance assist webapplication. The API based on REST software architectural style. It accepts JSON-encoded request bodies and returns JSON-encoded responses. It handles user management with Google Oauth2 standards and uses No-SQL database to store user's data.
   contact:
     email: gaborneubaue.hda@gmail.com
-  version: 1.1.2
+  version: 1.2.1
 servers:
   - url: http://localhost:3003/api
 tags:
+  - name: docs
+    description: Serving API documentation
   - name: login
     description: Managing login with Google and saving user
   - name: user
     description: Operations about user
-#  - name: docs
-#    description: Serving API documentation
   - name: health
     description: Liveness probe
   - name: ready
     description: Readiness probe
 paths:
+  /docs:
+    get:
+      tags:
+        - docs
+      summary: "Serving OpenApi 3.0 documentation in HTML format"
+      description: "The application server serves the whole OpenApi 3.0 documentation at /api/docs endpoint. The response is in HTML format, the browser displays it via Swagger UI."
+      responses:
+        '200':
+          $ref: '#/components/responses/200-docs'
+        '405':
+          $ref: '#/components/responses/405'
   /login:
     post:
       tags:
         - login
       summary: Logs user into the system and save user's data
-      description: "After authentication the server seaches for user in databes. If user is new, the server creates a user document in database. In both cases server generates and signs a session jwt with user's name, email address, profile picture url and unique sub in payload. Session token is sent to client in response body. "
+      description: "After authentication the server searches for user in databes. If user is new, the server creates a user document in database. In both cases server generates and signs a session jwt with user's name, email address, profile picture url and unique sub in payload. It has expiration as well. Session token is sent to client in response body."
       requestBody:
             $ref: '#/components/requestBodies/Login'
       responses:
@@ -43,7 +54,7 @@ paths:
     get:
       tags:
         - user
-      summary: Retrieves an existing user
+      summary: Retrieves an existent user
       description: "Returns a user object indentified by user's unique sub"
       security:
        - authorization: []
@@ -86,7 +97,7 @@ paths:
       tags:
         - user
       summary: Deletes a user
-      description: "Returns 204 when user is permanently removed from database with it's all data"
+      description: "Returns 204 when user is permanently removed from database with it's all data."
       security:
        - authorization: []
       responses:
@@ -105,7 +116,7 @@ paths:
       tags:
         - health
       summary: Health check
-      description: "Checks if application server is running and it's ready to serve traffic "
+      description: "Checks if application server is running and it's ready to serve traffic."
       responses:
         '200':
           $ref: '#/components/responses/200-healthy'
@@ -116,7 +127,7 @@ paths:
       tags:
         - ready
       summary: Ready check
-      description: "Checks if application server is running and all external dependencies are accessible and ready. The server is ready to serve requests "
+      description: "Checks if application server is running and all external dependencies are accessible and ready. The server is ready to serve requests."
       responses:
         '200':
           $ref: '#/components/responses/200-healthy'
@@ -129,10 +140,8 @@ paths:
 components:
 
   responses:
-    200-healthy:
-      description: Allication server is ready to serve traffic
-    200-ready:
-      description: Allication server and all external dependecies are ready to serve traffic
+    200-docs:
+      description: 'Serving OpenApi 3.0 documentation in browser'
     200-login:
       description: successful operation
       content:
@@ -145,6 +154,10 @@ components:
         application/json:
           schema:  
             $ref: '#/components/schemas/User'
+    200-healthy:
+      description: Allication server is ready to serve traffic
+    200-ready:
+      description: Allication server and all external dependecies are ready to serve traffic
     204-user:
       description: Successful operation
     400-login:
@@ -167,14 +180,14 @@ components:
   requestBodies:
     Login:
       required: true
-      description: "Sending authcode from Google's redirect uri"
+      description: "Sending authcode from Google's redirect uri."
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/LoginRequestBodyObject'
     User:
       required: true
-      description: The new user object for update database
+      description: "The new user object for update database"
       content:
        application/json:
           schema:

@@ -1,14 +1,12 @@
 import express, { Express, Request, Response } from "express"
 import jwt from "jsonwebtoken"
 import { z } from "zod"
-// import utility and middleware functions
 import filterMethodsMw from "../middlewares/filterMethods"
 import validateRequestMw from "../middlewares/validateRequest"
 import safeParserFc from "../utilities/safeParser"
 import env from "../utilities/envParser"
 if (!env.JWT_SECRET_KEY) throw "Secret Key is required."
-import { getIdToken } from "../api/googleOauth2"
-// import Mongoose models
+import getIdToken from "../api/googleOauth2"
 import { User, UserType } from "../models/user"
 
 

@@ -1,6 +1,6 @@
 import axios, { AxiosResponse } from "axios"
 import { z } from "zod"
-import { env } from "../utilities/envParser"
+import env from "../utilities/envParser"
 
 const url = "https://oauth2.googleapis.com/token"
 
@@ -15,7 +15,7 @@ const ResponseSchema = z.object({
 type ResponseType = z.infer<typeof ResponseSchema>
 
 
-export const getIdToken = async (code: string): Promise<string | null> => {
+const getIdToken = async (code: string): Promise<string | null> => {
     try {
         const response: AxiosResponse = await axios.post(url, {
             client_id: env.CLIENT_ID,
@@ -35,3 +35,5 @@ export const getIdToken = async (code: string): Promise<string | null> => {
         return null
     }
 }
+
+export default getIdToken

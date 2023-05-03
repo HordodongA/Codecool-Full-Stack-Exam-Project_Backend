@@ -1,10 +1,8 @@
 import express, { Express, Request, Response } from "express"
 import { z } from "zod"
-// import utility and middleware functions
 import filterMethodsMw from "../middlewares/filterMethods"
 import passOnlyUserMw from "../middlewares/passOnlyUser"
 import validateRequestMw from "../middlewares/validateRequest"
-// import Mongoose models
 import { User, UserType } from "../models/user"
 
 // * router endpoint: /api/user

@@ -1,8 +1,8 @@
 import dotenv from "dotenv"
 dotenv.config()
-import env from "./utilities/envParser"
 import mongoose from "mongoose"
 import { greenBright } from 'console-log-colors';
+import env from "./utilities/envParser"
 
 import app from "./app"
 
