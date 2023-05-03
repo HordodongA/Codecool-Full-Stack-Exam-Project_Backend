@@ -5,7 +5,7 @@ info:
     Simple API for Landlord maintenance assist webapplication. The API based on REST software architectural style. It accepts JSON-encoded request bodies and returns JSON-encoded responses. It handles user management with Google Oauth2 standards and uses No-SQL database to store user's data.
   contact:
     email: gaborneubaue.hda@gmail.com
-  version: 1.1.1
+  version: 1.1.2
 servers:
   - url: http://localhost:3003/api
 tags:
@@ -73,7 +73,7 @@ paths:
           content:
             application/json:
               schema:  
-                $ref: '#/components/schemas/UserObject'
+                $ref: '#/components/schemas/User'
         '400':
           $ref: '#/components/responses/400-user'
         '401':
@@ -144,7 +144,7 @@ components:
       content:
         application/json:
           schema:  
-            $ref: '#/components/schemas/UserObject'
+            $ref: '#/components/schemas/User'
     204-user:
       description: Successful operation
     400-login:
@@ -178,7 +178,7 @@ components:
       content:
        application/json:
           schema:
-            $ref: '#/components/schemas/UserObject'
+            $ref: '#/components/schemas/User'
 
   schemas:
     LoginRequestBodyObject:
@@ -193,7 +193,7 @@ components:
         sessionToken:
           type: string
           example: standard and signed jwt as string
-    UserObject:
+    User:
       required:
         - sub
       type: object
