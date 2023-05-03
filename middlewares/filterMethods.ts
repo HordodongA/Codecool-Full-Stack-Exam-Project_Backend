@@ -4,7 +4,7 @@ import { blueBright } from 'console-log-colors';
 
 type Params = string[]
 
-export const filterMethodsMw = (allowedMethodsArray: Params) => (req: Request, res: Response, next: NextFunction) => {
+const filterMethodsMw = (allowedMethodsArray: Params) => (req: Request, res: Response, next: NextFunction) => {
     console.log(blueBright("filterMethodsMw middleware runs"))
     if (allowedMethodsArray.includes(req.method)) {
         // console.log(allowedMethodsArray)
@@ -15,3 +15,5 @@ export const filterMethodsMw = (allowedMethodsArray: Params) => (req: Request, r
         return res.sendStatus(405)
     }
 }
+
+export default filterMethodsMw

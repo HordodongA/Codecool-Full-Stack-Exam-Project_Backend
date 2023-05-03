@@ -2,7 +2,7 @@ import express, { Request, Response } from "express"
 import swaggerJsdoc from "swagger-jsdoc"
 import swaggerUi from "swagger-ui-express"
 // import utility and middleware functions
-import { filterMethodsMw } from "../middlewares/filterMethods"
+import filterMethodsMw from "../middlewares/filterMethods"
 // import data
 import openapi from '../OpenAPI-doc_Landlord.json'
 

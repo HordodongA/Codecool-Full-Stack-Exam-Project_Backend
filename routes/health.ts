@@ -1,6 +1,6 @@
 import express, { Request, Response } from "express"
 // import utility and middleware functions
-import { filterMethodsMw } from "../middlewares/filterMethods"
+import filterMethodsMw from "../middlewares/filterMethods"
 
 // * router endpoint: /api/ready
 const router = express.Router()

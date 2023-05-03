@@ -1,12 +1,12 @@
 import { NextFunction, Request, Response } from "express"
 import jwt from "jsonwebtoken"
 import { blueBright } from 'console-log-colors';
-import { env } from "../utilities/envParser"
+import  env  from "../utilities/envParser"
 import { PayloadSchema } from "../routes/login"
-import { safeParserFc } from "../utilities/safeParser"
+import  safeParserFc  from "../utilities/safeParser"
 
 
-export const authenticateRequestMw = (req: Request, res: Response, next: NextFunction) => {
+const authenticateRequestMw = (req: Request, res: Response, next: NextFunction) => {
     console.log(blueBright("authenticateRequestMw middleware runs"))
     const token = req.headers.authorization as string
     if (!token) return next()
@@ -21,3 +21,5 @@ export const authenticateRequestMw = (req: Request, res: Response, next: NextFun
         next()
     }
 }
+
+export default authenticateRequestMw

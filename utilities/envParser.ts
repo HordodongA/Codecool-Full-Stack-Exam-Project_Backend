@@ -9,4 +9,6 @@ const envSchema = z.object({
   MONGO_DB_URL: z.string().min(1),
 })
 
-export const env = envSchema.parse(process.env)
+const env = envSchema.parse(process.env)
+
+export default env

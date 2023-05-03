@@ -1,7 +1,7 @@
 import express, { Express } from 'express'
 import cors from 'cors'
 // import middlewares
-import { authenticateRequestMw } from './middlewares/authenticateRequest'
+import authenticateRequestMw from './middlewares/authenticateRequest'
 // import routes
 import login from "./routes/login"
 import user from "./routes/user"
