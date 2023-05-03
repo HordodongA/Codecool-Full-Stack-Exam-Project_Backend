@@ -5,7 +5,7 @@ info:
     Simple API for Landlord maintenance assist webapplication. The API based on REST software architectural style. It accepts JSON-encoded request bodies and returns JSON-encoded responses. It handles user management with Google Oauth2 standards and uses No-SQL database to store user's data.
   contact:
     email: gaborneubaue.hda@gmail.com
-  version: 1.0.1
+  version: 1.1.1
 servers:
   - url: http://localhost:3003/api
 tags:
@@ -15,6 +15,10 @@ tags:
     description: Operations about user
 #  - name: docs
 #    description: Serving API documentation
+  - name: health
+    description: Liveness probe
+  - name: ready
+    description: Readiness probe
 paths:
   /login:
     post:
@@ -96,11 +100,39 @@ paths:
           $ref: '#/components/responses/404-user'
         '405':
           $ref: '#/components/responses/405'
+  /health:
+    get:
+      tags:
+        - health
+      summary: Health check
+      description: "Checks if application server is running and it's ready to serve traffic "
+      responses:
+        '200':
+          $ref: '#/components/responses/200-healthy'
+        '405':
+          $ref: '#/components/responses/405'
+  /ready:
+    get:
+      tags:
+        - ready
+      summary: Ready check
+      description: "Checks if application server is running and all external dependencies are accessible and ready. The server is ready to serve requests "
+      responses:
+        '200':
+          $ref: '#/components/responses/200-healthy'
+        '405':
+          $ref: '#/components/responses/405'
+        '503':
+          $ref: '#/components/responses/503'
 
 
 components:
 
   responses:
+    200-healthy:
+      description: Allication server is ready to serve traffic
+    200-ready:
+      description: Allication server and all external dependecies are ready to serve traffic
     200-login:
       description: successful operation
       content:
@@ -108,7 +140,7 @@ components:
           schema: 
             $ref: '#/components/schemas/LoginResponseBodyObject'
     200-user:
-      description: successful operation
+      description: Successful operation
       content:
         application/json:
           schema:  
@@ -127,6 +159,8 @@ components:
       description: Requested user is not exists in database
     405:
       description: Request's http method not allowed
+    503:
+      description: Service unaviable. Database is not connected
     503-login:
       description: Login service unaviable. Google's id_token is deficient
 
@@ -170,60 +204,66 @@ components:
         assets:
           type: array
           items:
-            type: object
-            required:
-              - name
-            properties:
-              name:
-                type: string
-                example: "Flat in Kertvaros"
-              location:
-                type: string
-                example: "Pecs, Aidinger str. 20."
-              credentials:
-                type: string
-                example: "16823/A/2/12-hrsz"
-              details:
-                type: string
-                example: "3rd floor, 63 m2, 3 rooms"
-              notes:
-                type: string
-                example: "Janitor: Kiss Ibolya, 06-30/235-5566"
-              activities:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    name:
-                      type: string
-                      example: "plumbing todos"
-                    todos:
-                      type: string
-                      example: "inspect pipes and faucets for leaks and clogs, change water cleaner filter "
-                  required:
-                    - name
-              machines:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    name:
-                      type: string
-                      example: "dishwasher"
-                    model:
-                      type: string
-                      example: ""
-                    unique_id:
-                      type: string
-                      example: "IND-220065-EU-845762558"
-                    service:
-                      type: string
-                      example: "Express Household Appliance: 06-70/555-6688"
-                    todos:
-                      type: string
-                      example: "cehck and refill regeneration salt and rins ad, check and clean dirt filter"
-                  required:
-                    - name
+            $ref: "#/components/schemas/Asset"
+    Asset:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          example: "Flat in Downtown"
+        location:
+          type: string
+          example: "Pecs, Kiraly str. 20."
+        credentials:
+          type: string
+          example: "16823/A/2/12-hrsz"
+        details:
+          type: string
+          example: "3rd floor, 63 m2, 3 rooms"
+        notes:
+          type: string
+          example: "Janitor: Kiss Ibolya, 06-30/235-5566"
+        activities:
+          type: array
+          items:
+            $ref: "#/components/schemas/Activity"
+        machines:
+          type: array
+          items:
+            $ref: "#/components/schemas/Machine"
+    Activity:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          example: "plumbing todos"
+        todos:
+          type: string
+          example: "inspect pipes and faucets for leaks and clogs, change water cleaner filter "
+    Machine:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          example: "dishwasher"
+        model:
+          type: string
+          example: "Supershiney 5000"
+        unique_id:
+          type: string
+          example: "SUP-220065-EU-845762558"
+        service:
+          type: string
+          example: "Express Household Appliance: 06-70/555-6688"
+        todos:
+          type: string
+          example: "cehck and refill regeneration salt and rins ad, check and clean dirt filter"
 
   securitySchemes:
     authorization:

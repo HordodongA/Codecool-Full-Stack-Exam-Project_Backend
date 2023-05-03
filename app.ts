@@ -6,6 +6,8 @@ import { authenticateRequestMw } from './middlewares/authenticateRequest'
 // import routes
 import login from "./routes/login"
 import user from "./routes/user"
+import health from "./routes/health"
+import ready from "./routes/ready"
 
 const app: Express = express()
 
@@ -17,6 +19,8 @@ app.use(authenticateRequestMw)
 // route listeners
 app.use('/api/login', login)
 app.use('/api/user', user)
+app.use('/api/health', health)
+app.use('/api/ready', ready)
 
 
 export default app
