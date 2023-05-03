@@ -6,7 +6,7 @@ import supertest from "supertest"
 import app from "../app"
 
 jest.mock("../api/googleOauth2")
-import { getIdToken } from "../api/googleOauth2"
+import getIdToken from "../api/googleOauth2"
 
 const testApp = supertest(app)
 
@@ -157,7 +157,7 @@ describe("Testing server behavior when sending expired or corrupted authcode to 
 
         // when
         const response = await testApp.post("/api/login")
-        .send({ code: testData.authCodes.corrupted })
+            .send({ code: testData.authCodes.corrupted })
 
         // then
         const createdUser = await User.find()
