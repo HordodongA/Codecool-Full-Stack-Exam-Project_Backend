@@ -78,7 +78,7 @@ describe("Testing request headers: not allowed HTTP methods", () => {
 })
 
 
-describe("Testing request body with missing, wrong format, expired, corrupted authcode on real Google Api", () => {
+describe("Testing requests with missing or wrong format body", () => {
 
     beforeAll(connect)
     beforeEach(cleanData)
@@ -124,15 +124,24 @@ describe("Testing request body with missing, wrong format, expired, corrupted au
         expect(createdUser).toHaveLength(0)
         expect(response.status).toBe(400)
     })
+})
 
-    it("should return 401 and not create user when sending POST request with expired authcode to /api/login", async () => {
+
+describe("Testing server behavior when sending expired or corrupted authcode to MOCKED Google Api", () => {
+
+    beforeAll(connect)
+    beforeEach(cleanData)
+    afterAll(disconnect)
+
+    it("should return 401 and not create user when sending POST request with expired authcode to /api/login (Mocked Google Api)", async () => {
 
         // given
-        const code = testData.authCodes.expired
+        const mockedGetIdToken = jest.mocked(getIdToken)
+        mockedGetIdToken.mockReturnValueOnce(Promise.resolve(null))
 
         // when
         const response = await testApp.post("/api/login")
-            .send({ code })
+            .send({ code: testData.authCodes.expired })
 
         // then
         const createdUser = await User.find()
@@ -140,14 +149,15 @@ describe("Testing request body with missing, wrong format, expired, corrupted au
         expect(response.status).toBe(401)
     })
 
-    it("should return 401 and not create user when sending POST request with corrupted authcode to /api/login", async () => {
+    it("should return 401 and not create user when sending POST request with corrupted authcode to /api/login (Mocked Google Api)", async () => {
 
         // given
-        const code = testData.authCodes.corrupted
+        const mockedGetIdToken = jest.mocked(getIdToken)
+        mockedGetIdToken.mockReturnValueOnce(Promise.resolve(null))
 
         // when
         const response = await testApp.post("/api/login")
-            .send({ code })
+        .send({ code: testData.authCodes.corrupted })
 
         // then
         const createdUser = await User.find()
@@ -201,7 +211,7 @@ describe("Testing login and database handling behavior after successful authenti
         expect(response.status).toBe(200)
     })
 
-    it("should not create user and return 503 when gets insufficient id_token from Google (no name, no email) (Mocked Google Api)", async () => {
+    it("should not create user and return 503 when gets insufficient id_token (no name, no email) from Google (Mocked Google Api)", async () => {
 
         // given
         const mockedGetIdToken = jest.mocked(getIdToken)
