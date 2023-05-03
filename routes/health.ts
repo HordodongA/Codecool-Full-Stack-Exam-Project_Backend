@@ -7,9 +7,12 @@ const router = express.Router()
 
 
 // routes
-router.get("/", filterMethodsMw(["GET"]), async (req: Request, res: Response) => {
+router.all("/", filterMethodsMw(["GET"]))
+
+router.get("/", async (req: Request, res: Response) => {
     console.log("A request reached /api/health GET endpoint")
     return res.sendStatus(200)
 })
+
 
 export default router

@@ -53,4 +53,5 @@ router.post("/", validateRequestMw(LoginRequestSchema), async (req: Request, res
     res.send({ sessionToken })
 })
 
+
 export default router

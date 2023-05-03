@@ -8,12 +8,16 @@ const router = express.Router()
 
 
 // routes
-router.get("/", filterMethodsMw(["GET"]), async (req: Request, res: Response) => {
+router.all("/", filterMethodsMw(["GET"]))
+
+router.get("/", async (req: Request, res: Response) => {
     console.log("A request reached /api/ready GET endpoint")
     const state = mongoose.connection.readyState
+    console.log("****************" , state)
     if (state === 1) return res.sendStatus(200)
     return res.sendStatus(503)
 })
+
 
 export default router
 

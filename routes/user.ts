@@ -41,16 +41,12 @@ type userRequestType = z.infer<typeof userRequestSchema>
 // routes
 router.all("/", filterMethodsMw(["GET", "PUT", "DELETE"]), passOnlyUserMw)
 
-
-
 router.get("/", async (req: Request, res: Response) => {
     console.log("A request reached /api/user GET endpoint")
     const user = await User.findOne({ sub: res.locals.sub }) as UserType | null
     if (!user) { return res.sendStatus(404) }
     res.send(user)
 })
-
-
 
 router.put("/", validateRequestMw(userRequestSchema), async (req: Request, res: Response) => {
     console.log("A request reached /api/user PUT endpoint")
@@ -60,8 +56,6 @@ router.put("/", validateRequestMw(userRequestSchema), async (req: Request, res: 
     if (!updatedUser) { return res.sendStatus(404) }
     res.send(updatedUser)
 })
-
-
 
 router.delete("/", async (req: Request, res: Response) => {
     console.log("A request reached /api/user DELETE endpoint")

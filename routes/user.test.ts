@@ -39,7 +39,7 @@ const testData = {
                         name: "air conditioner",
                         todos: "cleaning filter, disinfect condenser, unclog condensate drain tube"
                     },
-                    { name: "water fileter" }
+                    { name: "water filter" }
                 ]
             }
         ]
@@ -116,7 +116,7 @@ describe("Testing the session token in authorization headers", () => {
         expect(response.status).toBe(401)
     })
 
-    it("should return 401 when sending GET request with invalid signature session token to /api/user", async () => {
+    it("should return 401 when sending GET request with invalid signatured session token to /api/user", async () => {
 
         // given
         const sessionToken = testData.sessionTokens.invalidSignature
