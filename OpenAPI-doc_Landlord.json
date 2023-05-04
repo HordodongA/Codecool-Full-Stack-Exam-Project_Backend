@@ -6,7 +6,7 @@
     "contact": {
       "email": "gaborneubaue.hda@gmail.com"
     },
-    "version": "1.2.1"
+    "version": "1.2.2"
   },
   "servers": [
     {
@@ -49,6 +49,9 @@
           },
           "405": {
             "$ref": "#/components/responses/405"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
           }
         }
       }
@@ -75,6 +78,9 @@
           },
           "405": {
             "$ref": "#/components/responses/405"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
           },
           "503": {
             "$ref": "#/components/responses/503-login"
@@ -109,6 +115,9 @@
           },
           "405": {
             "$ref": "#/components/responses/405"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
           }
         }
       },
@@ -148,6 +157,9 @@
           },
           "405": {
             "$ref": "#/components/responses/405"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
           }
         }
       },
@@ -177,6 +189,9 @@
           },
           "405": {
             "$ref": "#/components/responses/405"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
           }
         }
       }
@@ -194,6 +209,9 @@
           },
           "405": {
             "$ref": "#/components/responses/405"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
           }
         }
       }
@@ -212,6 +230,9 @@
           "405": {
             "$ref": "#/components/responses/405"
           },
+          "500": {
+            "$ref": "#/components/responses/500"
+          },
           "503": {
             "$ref": "#/components/responses/503"
           }
@@ -223,6 +244,9 @@
     "responses": {
       "405": {
         "description": "Request's http method not allowed"
+      },
+      "500": {
+        "description": "Unexpected and unhandled server error"
       },
       "503": {
         "description": "Service unaviable. Database is not connected"

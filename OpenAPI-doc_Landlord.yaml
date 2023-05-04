@@ -5,7 +5,7 @@ info:
     Simple API for Landlord maintenance assist webapplication. The API based on REST software architectural style. It accepts JSON-encoded request bodies and returns JSON-encoded responses. It handles user management with Google Oauth2 standards and uses No-SQL database to store user's data.
   contact:
     email: gaborneubaue.hda@gmail.com
-  version: 1.2.1
+  version: 1.2.2
 servers:
   - url: http://localhost:3003/api
 tags:
@@ -31,6 +31,8 @@ paths:
           $ref: '#/components/responses/200-docs'
         '405':
           $ref: '#/components/responses/405'
+        '500':
+          $ref: '#/components/responses/500'
   /login:
     post:
       tags:
@@ -48,6 +50,8 @@ paths:
           $ref: '#/components/responses/401-login'
         '405':
           $ref: '#/components/responses/405'
+        '500':
+          $ref: '#/components/responses/500'
         '503':
           $ref: '#/components/responses/503-login'
   /user:
@@ -69,6 +73,8 @@ paths:
           $ref: '#/components/responses/404-user'
         '405':
           $ref: '#/components/responses/405'
+        '500':
+          $ref: '#/components/responses/500'
     put:
       tags:
         - user
@@ -93,6 +99,8 @@ paths:
           $ref: '#/components/responses/404-user'
         '405':
           $ref: '#/components/responses/405'
+        '500':
+          $ref: '#/components/responses/500'
     delete:
       tags:
         - user
@@ -111,6 +119,8 @@ paths:
           $ref: '#/components/responses/404-user'
         '405':
           $ref: '#/components/responses/405'
+        '500':
+          $ref: '#/components/responses/500'
   /health:
     get:
       tags:
@@ -122,6 +132,8 @@ paths:
           $ref: '#/components/responses/200-healthy'
         '405':
           $ref: '#/components/responses/405'
+        '500':
+          $ref: '#/components/responses/500'
   /ready:
     get:
       tags:
@@ -133,6 +145,8 @@ paths:
           $ref: '#/components/responses/200-healthy'
         '405':
           $ref: '#/components/responses/405'
+        '500':
+          $ref: '#/components/responses/500'
         '503':
           $ref: '#/components/responses/503'
 
@@ -172,6 +186,8 @@ components:
       description: Requested user is not exists in database
     405:
       description: Request's http method not allowed
+    500:
+      description: Unexpected and unhandled server error
     503:
       description: Service unaviable. Database is not connected
     503-login:

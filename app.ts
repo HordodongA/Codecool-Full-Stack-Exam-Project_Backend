@@ -2,6 +2,7 @@ import express, { Express } from 'express'
 import cors from 'cors'
 // import middlewares
 import authenticateRequestMw from './middlewares/authenticateRequest'
+import errorHandlerMW from './middlewares/errorHandler'
 // import routes
 import login from "./routes/login"
 import user from "./routes/user"
@@ -23,5 +24,7 @@ app.use('/api/health', health)
 app.use('/api/ready', ready)
 app.use('/api/docs', docs)
 
+// error handler middleware function
+app.use(errorHandlerMW)
 
 export default app

@@ -16,11 +16,10 @@ router.get("/", async (req: Request, res: Response) => {
     return res.sendStatus(503)
 })
 
-
 export default router
 
 
-// Mongoose connectionn states:
+// Mongoose connection states:
 // 0 = disconnected
 // 1 = connected
 // 2 = connecting
