@@ -5,7 +5,7 @@ import safeParserFc from "../utilities/safeParser"
 
 
 const validateRequestMw = <Schema extends z.ZodTypeAny>(schema: Schema) => (req: Request, res: Response, next: NextFunction) => {
-    console.log(blueBright("validateRequestMw middleware runs"))
+    // console.log(blueBright("validateRequestMw middleware runs"))
     const result = safeParserFc(schema, req.body)
     if (!result) {
         return res.sendStatus(400)

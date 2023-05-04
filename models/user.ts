@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import { Schema, InferSchemaType } from "mongoose";
 
+
 const ActivitySchema = new Schema({
     name: {
         required: true,

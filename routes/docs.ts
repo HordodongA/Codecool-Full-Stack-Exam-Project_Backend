@@ -1,4 +1,4 @@
-import express, { Request, Response } from "express"
+import express from "express"
 import swaggerJsdoc from "swagger-jsdoc"
 import swaggerUi from "swagger-ui-express"
 import filterMethodsMw from "../middlewares/filterMethods"
@@ -18,6 +18,7 @@ const specs = swaggerJsdoc(options)
 router.all("/", filterMethodsMw(["GET"]))
 
 router.use('/', swaggerUi.serve)
+
 router.get("/", swaggerUi.setup(specs, { explorer: true }))
 
 

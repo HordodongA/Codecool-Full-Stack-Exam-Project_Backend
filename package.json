@@ -1,7 +1,7 @@
 {
   "name": "landlord-backend",
   "version": "1.0.0",
-  "description": "Codecool Fullstack API exam project",
+  "description": "Codecool Fullstack API exam project Backend",
   "main": "server.js",
   "scripts": {
     "test": "jest",

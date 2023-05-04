@@ -1,12 +1,12 @@
 import express, { Express, Request, Response } from "express"
 import jwt from "jsonwebtoken"
 import { z } from "zod"
+import getIdToken from "../api/googleOauth2"
 import filterMethodsMw from "../middlewares/filterMethods"
 import validateRequestMw from "../middlewares/validateRequest"
 import safeParserFc from "../utilities/safeParser"
 import env from "../utilities/envParser"
 if (!env.JWT_SECRET_KEY) throw "Secret Key is required."
-import getIdToken from "../api/googleOauth2"
 import { User, UserType } from "../models/user"
 
 
@@ -43,9 +43,14 @@ router.post("/", validateRequestMw(LoginRequestSchema), async (req: Request, res
 
     const user = await User.findOne({ sub: result.sub })
     if (!user) {
-        const newUser = await User.create<UserType>({ sub: result.sub })
-        const sessionToken = jwt.sign(result, env.JWT_SECRET_KEY, { expiresIn: "6h" })
-        return res.send({ sessionToken })
+        try {
+            const newUser = await User.create<UserType>({ sub: result.sub })
+            const sessionToken = jwt.sign(result, env.JWT_SECRET_KEY, { expiresIn: "6h" })
+            return res.send({ sessionToken })
+        } catch (error) {
+            console.log("Mongoose error")
+            return res.sendStatus(503)
+        }
     }
     const sessionToken = jwt.sign(result, env.JWT_SECRET_KEY, { expiresIn: "6h" })
     res.send({ sessionToken })

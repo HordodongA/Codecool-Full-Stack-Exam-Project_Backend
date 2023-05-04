@@ -2,10 +2,10 @@ openapi: 3.0.3
 info:
   title: Landlord - maintenance assist API
   description: |-
-    Simple API for Landlord maintenance assist webapplication. The API based on REST software architectural style. It accepts JSON-encoded request bodies and returns JSON-encoded responses. It handles user management with Google Oauth2 standards and uses No-SQL database to store user's data.
+    Simple API for Landlord maintenance assistant webapplication. The API based on REST software architectural style. It accepts JSON-encoded request bodies and returns JSON-encoded responses. It handles user management with Google Oauth2 standards and uses No-SQL database to store user's data.
   contact:
     email: gaborneubaue.hda@gmail.com
-  version: 1.2.2
+  version: 1.2.3
 servers:
   - url: http://localhost:3003/api
 tags:
@@ -75,6 +75,8 @@ paths:
           $ref: '#/components/responses/405'
         '500':
           $ref: '#/components/responses/500'
+        '503':
+          $ref: '#/components/responses/503-db'
     put:
       tags:
         - user
@@ -101,6 +103,8 @@ paths:
           $ref: '#/components/responses/405'
         '500':
           $ref: '#/components/responses/500'
+        '503':
+          $ref: '#/components/responses/503-db'
     delete:
       tags:
         - user
@@ -121,6 +125,8 @@ paths:
           $ref: '#/components/responses/405'
         '500':
           $ref: '#/components/responses/500'
+        '503':
+          $ref: '#/components/responses/503-db'
   /health:
     get:
       tags:
@@ -148,7 +154,7 @@ paths:
         '500':
           $ref: '#/components/responses/500'
         '503':
-          $ref: '#/components/responses/503'
+          $ref: '#/components/responses/503-ready'
 
 
 components:
@@ -188,10 +194,12 @@ components:
       description: Request's http method not allowed
     500:
       description: Unexpected and unhandled server error
-    503:
-      description: Service unaviable. Database is not connected
+    503-db:
+      description: Service unaviable. Database error
+    503-ready:
+      description: Service unaviable. Database is not connected 
     503-login:
-      description: Login service unaviable. Google's id_token is deficient
+      description: Service unaviable. Google or database error
 
   requestBodies:
     Login:
