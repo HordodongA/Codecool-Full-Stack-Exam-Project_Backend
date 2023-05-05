@@ -8,7 +8,7 @@ NodeJS, Express JS, TypeScrypt, Mongoose (MongoDB noSQL database), Jest with Sup
 
 ## Table of Contents
 - [About](#about)
-- [Getting Started: Install app](#getting-started:-install-app)
+- [Getting Started (install app)](#getting-started-install-app)
 - [Availabla scripts](#available-scripts)
 - [Usage](#usage)
 - [Links](#links)
@@ -23,7 +23,7 @@ Planned future milestones will contains further modules, like cleaning, inspecti
 There is a Figma wireframe in the root of the repository. It made alongside of user stories, and it contains the basic design of frontend application too.  
 
 
-## Getting started: Install app
+## Getting started (install app)
 **The project's backend part is runnable by cloning the repository and follow this steps**
 ### Clone repository
 ### Install Node JS and Node Package Manager on your computer
@@ -46,7 +46,8 @@ It can be locally, using MongoDB Compass desktop application, or can be online v
 - [MongoDB Atlas tutorial](https://www.mongodb.com/basics/mongodb-atlas-tutorial)
 
 ### Set environmental variables
-Before use the application, required to set the following environmental variablaes. If app runs locally put all into a .env file in the root directory:
+Before use the application, required to set the following environmental variablaes.  
+If app runs locally put all into a .env file in the root directory.
 
 | Key             | Value                                                                                                            |
 | :---            | :---                                                                                                             |
@@ -80,7 +81,7 @@ A few minutes after server application is started either by npm start or npm run
 📀 Landlord Database is connected  
 ```
 It means that the server is ready to use.  
-In case of errors, the server uses the console to indicate them, and also send apprpriat responses to the client side.  
+In case of errors, the server uses the console to indicate them, and also send appropriate responses to the client side.  
 #### OpenAPI 3.0 (Swagger) documentation
 There is an api documentation in the root of the repository and it is served too by the server at /api/docs endpoint.  
 If it needs to be updated or corrected, there is need to save the new version in json and yaml formats and with the same name and place.
