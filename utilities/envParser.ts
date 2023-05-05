@@ -2,6 +2,7 @@ import { z } from "zod"
 
 const envSchema = z.object({
   PORT: z.string().min(1),
+  SERVER_ADDRESS: z.string().min(1),
   CLIENT_ID: z.string(),
   CLIENT_SECRET: z.string(),
   REDIRECT_URI: z.string(),

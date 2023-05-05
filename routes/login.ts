@@ -1,7 +1,7 @@
 import express, { Express, Request, Response } from "express"
 import jwt from "jsonwebtoken"
 import { z } from "zod"
-import getIdToken from "../api/googleOauth2"
+import getIdToken from "../api/googleOpenId"
 import filterMethodsMw from "../middlewares/filterMethods"
 import validateRequestMw from "../middlewares/validateRequest"
 import safeParserFc from "../utilities/safeParser"

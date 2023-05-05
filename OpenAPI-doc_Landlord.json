@@ -2,11 +2,11 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Landlord - maintenance assist API",
-    "description": "Simple API for Landlord maintenance assistant webapplication. The API based on REST software architectural style. It accepts JSON-encoded request bodies and returns JSON-encoded responses. It handles user management with Google Oauth2 standards and uses No-SQL database to store user's data.",
+    "description": "This is an OpenAPI specification document for a REST API of a landlord maintenance assistant web application. \n> \nThe API has five main tags:\n* docs: serves API documentation.\n* login: handles authentication and user creation.\n* user: performs operations on user data such as retrieving, updating and deleting user data.\n* health: performs a health check.\n* ready: performs a readiness check.\n>\nThe login route accepts a POST request with an encoded JSON body and returns a JSON-encoded response with a JWT session token.  \nThe user route accepts GET, PUT, and DELETE requests with a user's unique sub ID as a parameter and returns a JSON-encoded response with the user's data or confirmation of the operation.  \nThe health and ready routes accept GET requests and return a JSON-encoded response indicating the health or readiness status of the application.  \nThe docs route accepts GET requests and returns the OpenAPI documentation in HTML format.  \nThe API is based on the REST architectural style. It uses Google OpenId standards for user management and a No-SQL database to store user data.  \n\nThe specification is written using OpenAPI 3.0.3.\n",
     "contact": {
       "email": "gaborneubaue.hda@gmail.com"
     },
-    "version": "1.2.3"
+    "version": "1.2.4"
   },
   "servers": [
     {
@@ -16,23 +16,23 @@
   "tags": [
     {
       "name": "docs",
-      "description": "Serving API documentation"
+      "description": "serves API documentation."
     },
     {
       "name": "login",
-      "description": "Managing login with Google and saving user"
+      "description": "handles authentication and user creation."
     },
     {
       "name": "user",
-      "description": "Operations about user"
+      "description": "performs operations on user data such as retrieving, updating and deleting user data."
     },
     {
       "name": "health",
-      "description": "Liveness probe"
+      "description": "performs a health check."
     },
     {
       "name": "ready",
-      "description": "Readiness probe"
+      "description": "performs a readiness check."
     }
   ],
   "paths": {

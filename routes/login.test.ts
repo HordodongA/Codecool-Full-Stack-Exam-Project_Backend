@@ -6,7 +6,7 @@ import supertest from "supertest"
 import app from "../app"
 
 jest.mock("../api/googleOauth2")
-import getIdToken from "../api/googleOauth2"
+import getIdToken from "../api/googleOpenId"
 
 const testApp = supertest(app)
 
