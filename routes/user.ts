@@ -46,7 +46,7 @@ router.get("/", async (req: Request, res: Response) => {
         if (!user) { return res.sendStatus(404) }
         res.send(user)
     } catch (error) {
-        console.log("Mongoose error")
+        console.log("Mongoose error: ", error)
         return res.sendStatus(503)
     }
 })
@@ -59,7 +59,7 @@ router.put("/", validateRequestMw(userRequestSchema), async (req: Request, res: 
         if (!updatedUser) { return res.sendStatus(404) }
         res.send(updatedUser)
     } catch (error) {
-        console.log("Mongoose error")
+        console.log("Mongoose error: ", error)
         return res.sendStatus(503)
     }
 })
@@ -71,7 +71,7 @@ router.delete("/", async (req: Request, res: Response) => {
         if (!deletedUser) { return res.sendStatus(404) }
         res.sendStatus(204)
     } catch (error) {
-        console.log("Mongoose error")
+        console.log("Mongoose error: ", error)
         return res.sendStatus(503)
     }
 })

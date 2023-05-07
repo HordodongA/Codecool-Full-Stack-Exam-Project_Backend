@@ -26,12 +26,12 @@ const getIdToken = async (code: string): Promise<string | null> => {
         })
         const result = ResponseSchema.safeParse(response.data)
         if (result.success === false) {
-            console.log("getIDToken safeParse error")
+            console.log("getIDToken safeParse error: ", result.error)
             return null
         }
         return result.data.id_token
     } catch (error) {
-        console.log("getIDToken error")
+        console.log("getIDToken error: ", error)
         return null
     }
 }

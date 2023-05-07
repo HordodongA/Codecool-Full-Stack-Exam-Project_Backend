@@ -33,6 +33,7 @@ export type PayloadType = z.infer<typeof PayloadSchema>
 router.all("/", filterMethodsMw(["POST"]))
 
 router.post("/", validateRequestMw(LoginRequestSchema), async (req: Request, res: Response) => {
+    // console.log("A request reached /api/login POST endpoint")
     const loginRequest = req.body as LoginRequestType
     const idToken = await getIdToken(loginRequest.code)
     if (!idToken) return res.sendStatus(401)
@@ -48,7 +49,7 @@ router.post("/", validateRequestMw(LoginRequestSchema), async (req: Request, res
             const sessionToken = jwt.sign(result, env.JWT_SECRET_KEY, { expiresIn: "6h" })
             return res.send({ sessionToken })
         } catch (error) {
-            console.log("Mongoose error")
+            console.log("Mongoose error: ", error)
             return res.sendStatus(503)
         }
     }
