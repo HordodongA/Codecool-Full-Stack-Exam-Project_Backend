@@ -63,7 +63,7 @@ Starts te application in developer mode.
 ### `npm run build`
 Builds the app for production to the `dist` folder.
 ### `npm run start`
-Starts te builded application (npm run build command has to be executed before).
+Starts te builded application. (The npm run build command has to be executed before.)
 ### `npm test`
 Runs all of the definied tests with Jest and Supertest. The results will seen on the console.
 

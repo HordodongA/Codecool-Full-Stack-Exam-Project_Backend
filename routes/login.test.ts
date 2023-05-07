@@ -5,7 +5,7 @@ import { connect, cleanData, disconnect } from "../mongodbMemoryServer/mongodb-m
 import supertest from "supertest"
 import app from "../app"
 
-jest.mock("../api/googleOauth2")
+jest.mock("../api/googleOpenId")
 import getIdToken from "../api/googleOpenId"
 
 const testApp = supertest(app)
