@@ -7,7 +7,7 @@ The project is built for serving the "Landlord - maintenance assistant webapplic
 
 ## Table of Contents
 - [About](#about)
-- [Getting Started (install app)](#getting-started-install-app)
+- [Getting Started](#getting-started)
 - [Available scripts](#available-scripts)
 - [Usage](#usage)
 - [Links and resources](#links-and-resources)
@@ -18,30 +18,20 @@ The project is built for serving the "Landlord - maintenance assistant webapplic
 This application has come to life as a full-stack software developer school's exam project. It aims to help in the maintenance of various properties, such as flats, houses, premises, vehicles, and so on, by helping to collect information and todo lists in one place. In the first milestone, two modules were built: Activities and Machines. Planned future milestones will contain further modules, such as cleaning, inspections, inventory, administration and billing, animal and plant maintenance.
 
 
-## Getting started (install app)
-**The project's backend part is runnable by cloning the repository and follow this steps.**
-### Clone repository
-### Install Node JS and Node Package Manager on your computer necessary
-### Install project's dependencies (root directory)
-Install with [npm.](https://www.npmjs.com/)
-```
-$ npm install
-```
-It will install all dependencies collected in package.json file.
-
-### Register app on Google Developer Console
+## Getting started
+### Third party authentication, database and environmental variables
+#### Register app on Google Developer Console
 For the OpenId signup and login processes application needs to be registered on Google Developer Console. The received credentials has to be saved into environmental variable(s) as seen below. [See tutorial.](https://breadbutter.io/how-to-set-up-google-openid-connect/)
 - Scpoes needed:  _.../auth/userinfo.email,  .../auth/userinfo.profile,  openid_  
 - It's important that Google Dev Console credentials, backend's environmental variables and frontend's config.ts file all contains the same values.
-
-### Set up a MoongoDB database
+#### Set up a MoongoDB database
 It can be locally, using MongoDB Compass desktop application, or can be online via MongoDB Atlas. Set connection string as environmental variable (see below).  
-- [Compass tutorial](https://www.mongodb.com/docs/compass/current/databases/)
-- [MongoDB Atlas tutorial](https://www.mongodb.com/basics/mongodb-atlas-tutorial)
-
-### Set environmental variables
-Before use the application, required to set the following environmental variablaes.  
-If app runs locally put all into a .env file in the root directory.
+- [Compass tutorial](https://www.mongodb.com/docs/compass/current/databases/)  
+- [MongoDB Atlas tutorial](https://www.mongodb.com/basics/mongodb-atlas-tutorial)  
+#### Set environmental variables
+Before use the application, required to set the following environmental variables.  
+If app runs locally put all into a .env file in the root directory.  
+(If app runs in a Docker container please check next section as well.)  
 
 | Key             | Value                                                                                                            |
 | :---            | :---                                                                                                             |
@@ -50,8 +40,46 @@ If app runs locally put all into a .env file in the root directory.
 | CLIENT_ID       | A Google credential that given as a part of the Dev Console registration process.                                |
 | CLIENT_SECRET   | A Google credential that given as a part of the Dev Console registration process.                                |
 | REDIRECT_URI    | A Google credential that need to be set as a part of the registration pocess.                                    |
-| JWT_SECRET_KEY  | Required for the signing process off json web tokens. Could be any string, but suggested to be a 256 bit string. |
+| JWT_SECRET_KEY  | Required for the signing process of json web tokens. Could be any string, but suggested to be a 256 bit string.  |
 | MONGO_DB_URL    | MongoDB database connection string.                                                                              |
+
+### At this point you have two ways to continue: Running app in a Docker container or installing it:
+### Use Docker image file
+The backend application will running here: http://localhost:3003/  
+It's important that Google Dev Console credentials, backend's environmental variables and frontend's src/config.ts file all contains the same values.  
+#### Method #1: Using .env file
+Use this command to download and run Docker image file mapped to the port 3003. The .env file is necessary at the workdir. See previous section.  
+```
+$  docker run -d -p 3003:3003  --env-file .env hordodonga/landlord-backend:1.0
+```
+#### Method #2: Set enviromental variables in command below
+Use this command to download and run Docker image file mapped to the port 3003.  
+```
+$  docker run -d -p 3003:3003 \
+-e "PORT=3003" \
+-e "SERVER_ADDRESS=http://localhost:3003" \
+-e "CLIENT_ID=<google_app_id>" \
+-e "CLIENT_SECRET=<google_app_secret>" \
+-e "REDIRECT_URI=http://localhost:5173/callback" \
+-e "JWT_SECRET_KEY=<jwt_secret_key>" \
+-e "MONGO_DB_URL=<mongodb_url>" \
+ hordodonga/landlord-backend:1.0
+```
+
+### Install app
+**The project's backend part is runnable by cloning the repository and follow this steps.**
+#### Clone repository
+```
+$ git clone https://github.com/HordodongA/Codecool-Full-Stack-Exam-Project_Backend.git
+```
+#### Install Node JS and Node Package Manager on your computer necessary
+#### Install project's dependencies (root directory)
+Install with [npm.](https://www.npmjs.com/)
+```
+$ npm install
+```
+It will install all dependencies collected in package.json file.  
+
 
 **If you walked along all above steps, the application is ready to use. See scripts below.**
 
