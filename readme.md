@@ -22,7 +22,7 @@ This application has come to life as a full-stack software developer school's ex
 ### Third party authentication, database and environmental variables
 #### Register app on Google Developer Console
 For the OpenId signup and login processes application needs to be registered on Google Developer Console. The received credentials has to be saved into environmental variable(s) as seen below. [See tutorial.](https://breadbutter.io/how-to-set-up-google-openid-connect/)
-- Scpoes needed:  _.../auth/userinfo.email,  .../auth/userinfo.profile,  openid_  
+- Scopes needed:  _.../auth/userinfo.email,  .../auth/userinfo.profile,  openid_  
 - It's important that Google Dev Console credentials, backend's environmental variables and frontend's config.ts file all contains the same values.
 #### Set up a MoongoDB database
 It can be locally, using MongoDB Compass desktop application, or can be online via MongoDB Atlas. Set connection string as environmental variable (see below).  
@@ -39,7 +39,7 @@ If app runs locally put all into a .env file in the root directory.
 | SERVER_ADDRESS  | Just a note, application not using it. Don't delete field and value, it ruins the validation.                    |
 | CLIENT_ID       | A Google credential that given as a part of the Dev Console registration process.                                |
 | CLIENT_SECRET   | A Google credential that given as a part of the Dev Console registration process.                                |
-| REDIRECT_URI    | A Google credential that need to be set as a part of the registration pocess.                                    |
+| REDIRECT_URI    | A Google credential that need to be set as a part of the registration process.                                    |
 | JWT_SECRET_KEY  | Required for the signing process of json web tokens. Could be any string, but suggested to be a 256 bit string.  |
 | MONGO_DB_URL    | MongoDB database connection string.                                                                              |
 
@@ -52,7 +52,7 @@ Use this command to download and run Docker image file mapped to the port 3003. 
 ```
 $  docker run -d -p 3003:3003  --env-file .env hordodonga/landlord-backend:1.0
 ```
-#### Method #2: Set enviromental variables in command below
+#### Method #2: Set environmental variables in command below
 Use this command to download and run Docker image file mapped to the port 3003.  
 ```
 $  docker run -d -p 3003:3003 \
@@ -93,7 +93,7 @@ Builds the app for production to the `dist` folder.
 ### `npm run start`
 Starts te builded application. (The npm run build command has to be executed before.)
 ### `npm test`
-Runs all of the definied tests with Jest and Supertest. The results will seen on the console.
+Runs all of the defined tests with Jest and Supertest. The results will seen on the console.
 
 
 ## Usage

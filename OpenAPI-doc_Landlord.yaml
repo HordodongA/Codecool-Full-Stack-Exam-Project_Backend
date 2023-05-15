@@ -1,4 +1,4 @@
-openapi: 3.0.3
+openapi: 3.0.4
 info:
   title: Landlord - maintenance assist API
   description: |
@@ -53,7 +53,7 @@ paths:
       tags:
         - login
       summary: Logs user into the system and save user's data
-      description: "After authentication the server searches for user in databes. If user is new, the server creates a user document in database. In both cases server generates and signs a session jwt with user's name, email address, profile picture url and unique sub in payload. It has expiration as well. Session token is sent to client in response body."
+      description: "After authentication the server searches for user in database. If user is new, the server creates a user document in database. In both cases server generates and signs a session jwt with user's name, email address, profile picture url and unique sub in payload. It has expiration as well. Session token is sent to client in response body."
       requestBody:
             $ref: '#/components/requestBodies/Login'
       responses:
@@ -74,7 +74,7 @@ paths:
       tags:
         - user
       summary: Retrieves an existent user
-      description: "Returns a user object indentified by user's unique sub"
+      description: "Returns a user object identified by user's unique sub"
       security:
        - authorization: []
       responses:
@@ -190,9 +190,9 @@ components:
           schema:  
             $ref: '#/components/schemas/User'
     200-healthy:
-      description: Allication server is ready to serve traffic
+      description: Application server is ready to serve traffic
     200-ready:
-      description: Allication server and all external dependecies are ready to serve traffic
+      description: Application server and all external dependencies are ready to serve traffic
     204-user:
       description: Successful operation
     400-login:
@@ -210,11 +210,11 @@ components:
     500:
       description: Unexpected and unhandled server error
     503-db:
-      description: Service unaviable. Database error
+      description: Service unavailable. Database error
     503-ready:
-      description: Service unaviable. Database is not connected 
+      description: Service unavailable. Database is not connected 
     503-login:
-      description: Service unaviable. Google or database error
+      description: Service unavailable. Google or database error
 
   requestBodies:
     Login:
