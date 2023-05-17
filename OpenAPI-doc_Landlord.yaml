@@ -1,4 +1,4 @@
-openapi: 3.0.4
+openapi: 3.0.3
 info:
   title: Landlord - maintenance assist API
   description: |
@@ -20,7 +20,7 @@ info:
     The specification is written using OpenAPI 3.0.3.
   contact:
     email: gaborneubaue.hda@gmail.com
-  version: 1.2.4
+  version: 1.2.5
 servers:
   - url: http://localhost:3003/api
 tags:

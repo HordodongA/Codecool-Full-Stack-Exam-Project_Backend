@@ -2,10 +2,10 @@ import { Request, Response, NextFunction } from "express"
 import { redBright } from "console-log-colors"
 
 
-const errorHandlerMW = (err: Error, req: Request, res: Response, next: NextFunction) => {
+const errorHandlerMw = (err: Error, req: Request, res: Response, next: NextFunction) => {
     // console.log(redBright("errorHandlerMW middleware runs"))
     console.log(redBright("Unexpected error happened: "), err.message)
     res.sendStatus(500)
 }
 
-export default errorHandlerMW
+export default errorHandlerMw
