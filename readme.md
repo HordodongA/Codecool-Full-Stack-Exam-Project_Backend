@@ -39,7 +39,7 @@ If app runs locally put all into a .env file in the root directory.
 | SERVER_ADDRESS  | Just a note, application not using it. Don't delete field and value, it ruins the validation.                    |
 | CLIENT_ID       | A Google credential that given as a part of the Dev Console registration process.                                |
 | CLIENT_SECRET   | A Google credential that given as a part of the Dev Console registration process.                                |
-| REDIRECT_URI    | A Google credential that need to be set as a part of the registration process.                                    |
+| REDIRECT_URI    | A Google credential that need to be set as a part of the registration process.                                   |
 | JWT_SECRET_KEY  | Required for the signing process of json web tokens. Could be any string, but suggested to be a 256 bit string.  |
 | MONGO_DB_URL    | MongoDB database connection string.                                                                              |
 
@@ -55,14 +55,14 @@ $  docker run -d -p 3003:3003  --env-file .env hordodonga/landlord-backend:1.0
 #### Method #2: Set environmental variables in command below
 Use this command to download and run Docker image file mapped to the port 3003.  
 ```
-$  docker run -d -p 3003:3003 \
--e "PORT=3003" \
--e "SERVER_ADDRESS=http://localhost:3003" \
--e "CLIENT_ID=<google_app_id>" \
--e "CLIENT_SECRET=<google_app_secret>" \
--e "REDIRECT_URI=http://localhost:5173/callback" \
--e "JWT_SECRET_KEY=<jwt_secret_key>" \
--e "MONGO_DB_URL=<mongodb_url>" \
+$  docker run -d -p 3003:3003 ^
+-e "PORT=3003" ^
+-e "SERVER_ADDRESS=http://localhost:3003" ^
+-e "CLIENT_ID=<google_app_id>" ^
+-e "CLIENT_SECRET=<google_app_secret>" ^
+-e "REDIRECT_URI=http://localhost:5173/callback" ^
+-e "JWT_SECRET_KEY=<jwt_secret_key>" ^
+-e "MONGO_DB_URL=<mongodb_url>" ^
  hordodonga/landlord-backend:1.0
 ```
 
